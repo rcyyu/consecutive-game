@@ -1,0 +1,7 @@
+Player places card:
+1. Client passes card id and location (row, col) to server.
+2. Verify user actually has that card id in hand. If so continue, if not broadcast message client x tried cheating and end game.
+3. Place card on board at location. Check if card actually at location. If so continue, if not return error.
+4. Remove card from player's hand. Broadcast new card placement on board and update board.
+5. Player gets new card.
+

@@ -1,0 +1,39 @@
+Setup:
+# of players 2-12
+If more than three are playing, they should be evenly divided into 2 or 3 teams, therefore:
+2, 3, 4, 6, 8, 9, 10, 12 possible players a game.
+
+Players will alternate between teams with each player of a team. 
+ie. R1, B1, G1, R2, B2, G2, R1, B1, G1, R2... for 3 teams
+    or R1, B1, R2, B2, R1, B1... for two teams
+
+If the player who played first wins and the seconds player wins in the next turn it's a tie
+(Probably do this with rounds)
+
+There is a draw deck, a discard pile, and marker chips. Jokers are discarded.
+
+Each player gets holds a number of cards depending on the number of players.
+2 players: 7 cards
+3 players: 6 cards
+4 players: 6 cards
+6 players: 5 cards
+8 players: 4 cards
+9 players: 4 cards
+10 players: 3 cards
+12 players: 3 cards
+
+During a player's turn:
+Player chooses a card from their hand, and places a chip on one of the corresponding spaces
+of the game board. ie. Drawing an Ace of Diamonds places a chip on one of two Ace of Diamonds
+on the board.
+Chips can be placed on the appropriate card pace as long as it is not occupied.
+If both spaces of a card the player has are occupied, then the card is dead and the player
+draws a new card.
+Jacks are wild.
+- Two-Eyed Jacks can represent any card and may be used to place a chip on any
+  space on the board
+- One-Eyed Jacks can remove an opponent's advantage by removing a chip from any occupied
+  space on the board with the exception of already completed sequences
+After the card is drawn, it goes into the discard pile.
+The player draws a replacement card from the draw deck.
+
