@@ -22,11 +22,12 @@ function getUserRooms(socket) {
 }
 
 io.on("connection", socket => {
-	socket.on("create-room", () => {
+	socket.on("create-room", data => {
 		const roomID = randomWords({ min: 2, max: 4, join:'', formatter: (word, index) => {
 			return index === 0 ? word.slice(0,1).toUpperCase().concat(word.slice(1)) : word;
 		}});
-		rooms[roomID] = { users: {}, deck: deck, board: board }
+		rooms[roomID] = { users: {}, teams: data.teams, players: data.players, deck: deck, board: board }
+		console.log(rooms);
 		socket.emit('created-room', roomID);
 	});
 

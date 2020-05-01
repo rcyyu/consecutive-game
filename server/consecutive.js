@@ -69,7 +69,6 @@ class Consecutive {
             if ((place.card === card || card in this.twoEyedJacks) && !place.occupied) {
                 this.board[row][col].occupied = true;
                 this.board[row][col].team = team;
-                // TODO: check sequence
                 return true
             }
         }
@@ -245,10 +244,8 @@ class Consecutive {
             this.teams[team].sequences += newSequences.length;
         }
         return newSequences;
-
     }
 
-    // getSequence(row, col, team) {
     printBoard() {
         for (let r = 0; r < this.board.length; r++) {
             let row = []
@@ -262,7 +259,6 @@ class Consecutive {
             console.log(row.toString());
         }
     }
-    // }
 }
 var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
 var game = new Consecutive(board, deck, teams);
