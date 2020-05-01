@@ -1,10 +1,19 @@
 <template>
 	<div>
-		<input v-model="username" type="text">
-		<button v-on:click="joinRoom()">Join Room</button>
-		<div v-for="message in messages" v-bind:key="message.id">
-			{{ message }}
-		</div>
+		<template v-if="!playerJoined">
+			<div>
+				<input v-model="username" type="text">
+				<button v-on:click="joinRoom()">Join Room</button>
+			</div>
+		</template>
+		<template v-if="playerJoined">
+			<div v-for="message in messages" v-bind:key="message.id">
+				{{ message }}
+			</div>
+		</template>
+		<template v-if="gameReady && isLeader">
+			<button v-on:click="startGame()">Start Game</button>
+		</template>
 	</div>
 </template>
 
@@ -19,7 +28,10 @@
 				context: {},
 				messages: [],
 				roomID: this.$route.params.room,
-				username: sessionStorage.getItem('username')
+				username: null,
+				isLeader: false,
+				playerJoined: false,
+				gameReady: false
 			}
 		},
 		created() {
@@ -27,6 +39,7 @@
 		},
 		mounted() {
 			this.socket.on('user-connected', () => {
+				this.playerJoined = true;
 				this.messages.push('You joined');
 			});
 			this.socket.on('other-user-connected', data => {
@@ -35,13 +48,27 @@
 			this.socket.on('other-user-disconnected', data => {
 				this.messages.push(data + ' disconnected');
 			});
+			this.socket.on('user-leadered', () => {
+				this.isLeader = true;
+				this.messages.push('You are the leader.');
+			});
+			this.socket.on('game-ready', () => {
+				this.messages.push('Game is ready to begin.');
+				this.gameReady = true;
+			});
+			this.socket.on('full-room', () => {
+				this.messages.push('Cannot join room. Room is full.')
+			});
 			this.socket.on('invalid-room', () => {
 				this.messages.push('Cannot join room. Room does not exist.')
-			})
+			});
 		},
 		methods: {
 			joinRoom() {
-				this.socket.emit('join-room', { roomID: this.roomID, username: this.username })
+				this.socket.emit('join-room', { roomID: this.roomID, username: this.username });
+			},
+			startGame() {
+				this.socket.emit('start-game', { roomID: this.roomID });
 			}
 		}
 	}
