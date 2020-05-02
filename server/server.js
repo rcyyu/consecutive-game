@@ -7,11 +7,6 @@ const { uuid } = require('uuidv4');
 const deck  = require('./deck');
 const board = require('./board');
 
-var position = {
-	x: 200,
-	y: 200
-};
-
 const rooms = {};
 
 function getUserRooms(socket) {
@@ -26,19 +21,34 @@ io.on("connection", socket => {
 		const roomID = randomWords({ min: 2, max: 4, join:'', formatter: (word, index) => {
 			return index === 0 ? word.slice(0,1).toUpperCase().concat(word.slice(1)) : word;
 		}});
-		rooms[roomID] = { users: {}, numTeams: data.teams, numPlayers: data.players, deck: deck, board: board }
+		rooms[roomID] = {
+			users: {},
+			leader: null,
+			numTeams: data.teams,
+			numPlayers: data.players,
+			deck: deck,
+			board: board
+		}
 		socket.emit('created-room', roomID);
 	});
 
 	socket.on("join-room", data => {
 		if (rooms[data.roomID] != null) {
 			if (rooms[data.roomID].numPlayers > Object.keys(rooms[data.roomID].users).length) {
-				rooms[data.roomID].users[socket.id] = { username: data.username, leader: false, team: null, hand: null };
+				rooms[data.roomID].users[socket.id] = {
+					username: data.username,
+					isLeader: false,
+					team: null,
+					hand: null
+				};
 				socket.join(data.roomID);
 				socket.emit('user-connected', data.roomID);
-				if (Object.keys(rooms[data.roomID].users).length === 1) {
-					rooms[data.roomID].users[socket.id].leader = true;
+				if (rooms[data.roomID].leader === null) {
+					rooms[data.roomID].users[socket.id].isLeader = true;
+					rooms[data.roomID].leader = rooms[data.roomID].users[socket.id].username;
 					socket.emit('user-leadered');
+				} else {
+					socket.emit('identify-leader', rooms[data.roomID].leader);
 				}
 				socket.to(data.roomID).emit('other-user-connected', data.username);
 				if (rooms[data.roomID].numPlayers == Object.keys(rooms[data.roomID].users).length) {
@@ -50,13 +60,24 @@ io.on("connection", socket => {
 		} else {
 			socket.emit('invalid-room');
 		}
-		console.log(rooms);
+	});
+
+	socket.on('start-game', data => {
+		// Initialize
 	});
 
 	socket.on('disconnect', () => {
 		getUserRooms(socket).forEach(room => {
 			// delete user from room
 			socket.to(room).emit('other-user-disconnected', rooms[room].users[socket.id].username)
+			if (rooms[room].users[socket.id].isLeader && Object.keys(rooms[room].users).length > 0) {
+				let newLeader = Object.keys(rooms[room].users)[1]
+				rooms[room].users[newLeader].isLeader = true;
+				rooms[room].leader = rooms[room].users[newLeader].username;
+				io.to(newLeader).emit('user-leadered');
+				socket.to(room).emit('identify-leader', rooms[room].leader)
+			}
+			io.in(room).emit('game-not-ready');
 			delete rooms[room].users[socket.id]
 			// delete room if empty
 			if (Object.keys(rooms[room].users).length === 0 && rooms[room].users.constructor === Object) {

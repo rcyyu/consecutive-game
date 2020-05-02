@@ -30,6 +30,7 @@
 				roomID: this.$route.params.room,
 				username: null,
 				isLeader: false,
+				leaderID: null,
 				playerJoined: false,
 				gameReady: false
 			}
@@ -52,10 +53,20 @@
 				this.isLeader = true;
 				this.messages.push('You are the leader.');
 			});
+			this.socket.on('identify-leader', data => {
+				this.leader = data
+				this.messages.push(data + ' is the leader.')
+			});
 			this.socket.on('game-ready', () => {
-				this.messages.push('Game is ready to begin.');
+				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
 				this.gameReady = true;
 			});
+			this.socket.on('game-not-ready', () => {
+				if (this.gameReady) {
+					this.messages.push('Game is not ready.')
+					this.gameReady = false;
+				}
+			})
 			this.socket.on('full-room', () => {
 				this.messages.push('Cannot join room. Room is full.')
 			});
