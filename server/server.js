@@ -4,11 +4,12 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const randomWords = require('random-words');
 const { uuid } = require('uuidv4');
-const deck  = require('./deck');
-const board = require('./board');
+const deck  = require('./game/deck');
+const board = require('./game/board');
 
 const rooms = {};
 
+// Gets all the rooms the user is in
 function getUserRooms(socket) {
 	return Object.entries(rooms).reduce((names, [name, room]) => {
 		if (room.users[socket.id] != null) names.push(name)
@@ -64,6 +65,9 @@ io.on("connection", socket => {
 
 	socket.on('start-game', data => {
 		// Initialize
+		Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
+
+		});
 	});
 
 	socket.on('disconnect', () => {
