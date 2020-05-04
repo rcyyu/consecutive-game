@@ -57,7 +57,7 @@
 				this.leader = data
 				this.messages.push(data + ' is the leader.')
 			});
-			this.socket.on('game-ready', () => {
+			this.socket.on('lobby-ready', () => {
 				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
 				this.gameReady = true;
 			});

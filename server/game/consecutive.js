@@ -17,6 +17,29 @@ class Consecutive {
         'jh': 1
     }
 
+    getPlayerHandSize(numPlayers) {
+        switch(numPlayers) {
+            case 2:
+                return 7;
+            case 3:
+                return 6;
+            case 4:
+                return 6;
+            case 6:
+                return 5;
+            case 8:
+                return 4;
+            case 9:
+                return 4;
+            case 10:
+                return 3;
+            case 12:
+                return 3;
+            default:
+                return -1;
+        }
+    }
+
     shuffleDeck() {
         for (let i = this.deck.deckLength - 1; i > 0; i--) {
             let r = Math.floor(Math.random() * (i + 1));
@@ -260,21 +283,23 @@ class Consecutive {
         }
     }
 }
-var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
-var game = new Consecutive(board, deck, teams);
-game.shuffleDeck();
+// var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
+// var game = new Consecutive(board, deck, teams);
+// game.shuffleDeck();
 
-game.placeCard('kd', 'B', 7, 2);
-game.placeCard('qh', 'B', 6, 3);
-game.placeCard('3h', 'B', 5, 4);
-game.placeCard('5h', 'B', 4, 5);
-game.placeCard('5c', 'B', 3, 6);
-// game.placeCard('2c', 'B', 6, 6);
-console.log('sequence', game.updateSequences(7, 2, 'B'));
-game.placeCard('3h', 'B', 8, 1);
+// game.placeCard('kd', 'B', 7, 2);
+// game.placeCard('qh', 'B', 6, 3);
+// game.placeCard('3h', 'B', 5, 4);
+// game.placeCard('5h', 'B', 4, 5);
+// game.placeCard('5c', 'B', 3, 6);
+// // game.placeCard('2c', 'B', 6, 6);
+// console.log('sequence', game.updateSequences(7, 2, 'B'));
+// game.placeCard('3h', 'B', 8, 1);
 
-game.placeCard('2d', 'B', 2, 7);
-game.placeCard('5c', 'B', 1, 8);
-// game.placeCard('4c', 'B', 4, 6);
-console.log('sequence', game.updateSequences(1, 8, 'B'));
-game.printBoard();
+// game.placeCard('2d', 'B', 2, 7);
+// game.placeCard('5c', 'B', 1, 8);
+// // game.placeCard('4c', 'B', 4, 6);
+// console.log('sequence', game.updateSequences(1, 8, 'B'));
+// game.printBoard();
+
+module.exports = Consecutive;

@@ -6,6 +6,8 @@ const randomWords = require('random-words');
 const { uuid } = require('uuidv4');
 const deck  = require('./game/deck');
 const board = require('./game/board');
+const Consecutive = require('./game/consecutive');
+const { teams, teamAsssignment } = require('./game/teams');
 
 const rooms = {};
 
@@ -27,8 +29,7 @@ io.on("connection", socket => {
 			leader: null,
 			numTeams: data.teams,
 			numPlayers: data.players,
-			deck: deck,
-			board: board
+			game: null
 		}
 		socket.emit('created-room', roomID);
 	});
@@ -53,7 +54,7 @@ io.on("connection", socket => {
 				}
 				socket.to(data.roomID).emit('other-user-connected', data.username);
 				if (rooms[data.roomID].numPlayers == Object.keys(rooms[data.roomID].users).length) {
-					io.in(data.roomID).emit('game-ready');
+					io.in(data.roomID).emit('lobby-ready');
 				}
 			} else {
 				socket.emit('full-room');
@@ -64,9 +65,17 @@ io.on("connection", socket => {
 	});
 
 	socket.on('start-game', data => {
-		// Initialize
+		let initTeams = teams[rooms[data.roomID].numTeams];
+		const numPlayers = rooms[data.roomID].numPlayers;
+		rooms[data.roomID].game = new Consecutive(board, deck, initTeams);
+		const playerHandSize = Consecutive.getPlayerHandSize(numPlayers);
 		Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
-
+			rooms[data.roomID].users[userSocket].team = teamAsssignment[i % numPlayers];
+			rooms[data.roomID].users[userSocket].hand = rooms[data.roomID].game.getCardStack(playerHandSize);
+			io.to(userSocket).emit('player-init', {
+				team: rooms[data.roomID].users[userSocket].team,
+				hand: rooms[data.roomID].users[userSocket].hand
+			});
 		});
 	});
 
@@ -74,7 +83,7 @@ io.on("connection", socket => {
 		getUserRooms(socket).forEach(room => {
 			// delete user from room
 			socket.to(room).emit('other-user-disconnected', rooms[room].users[socket.id].username)
-			if (rooms[room].users[socket.id].isLeader && Object.keys(rooms[room].users).length > 0) {
+			if (rooms[room].users[socket.id].isLeader && Object.keys(rooms[room].users).length > 1) {
 				let newLeader = Object.keys(rooms[room].users)[1]
 				rooms[room].users[newLeader].isLeader = true;
 				rooms[room].leader = rooms[room].users[newLeader].username;

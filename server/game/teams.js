@@ -3,4 +3,11 @@ const teams = {
     3: { 'B': { sequences: 0 }, 'G': { sequences: 0 }, 'R': { sequences: 0 } }
 };
 
-module.exports = teams;
+const teamAssignment = {
+    0: 'B',
+    1: 'G',
+    2: 'R'
+};
+
+module.teams = teams;
+module.teamAssignment = teamAssignment;
