@@ -8,7 +8,7 @@ const deck  = require('./game/deck');
 const board = require('./game/board');
 const Consecutive = require('./game/consecutive');
 const TurnManager = require('./game/turnManager.js');
-const { teams, teamAsssignment } = require('./game/teams');
+const { teams, teamAssignment } = require('./game/teams');
 
 const rooms = {};
 
@@ -56,7 +56,7 @@ io.on("connection", socket => {
 				}
 				socket.to(data.roomID).emit('other-user-connected', data.username);
 				if (rooms[data.roomID].numPlayers == Object.keys(rooms[data.roomID].users).length) {
-					io.in(data.roomID).emit('lobby-ready');
+					io.in(data.roomID).emit('game-ready');
 				}
 			} else {
 				socket.emit('full-room');
@@ -67,26 +67,30 @@ io.on("connection", socket => {
 	});
 
 	socket.on('start-game', data => {
-		let initTeams = teams[rooms[data.roomID].numTeams];
-		const numPlayers = rooms[data.roomID].numPlayers;
-		rooms[data.roomID].game = new Consecutive(board, deck, initTeams);
-		const playerHandSize = Consecutive.getPlayerHandSize(numPlayers);
-		Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
-			rooms[data.roomID].users[userSocket].team = teamAsssignment[i % numPlayers];
-			rooms[data.roomID].users[userSocket].hand = rooms[data.roomID].game.getCardStack(playerHandSize);
-			io.to(userSocket).emit('player-init', {
-				team: rooms[data.roomID].users[userSocket].team,
-				hand: rooms[data.roomID].users[userSocket].hand
+		try {
+			let initTeams = teams[rooms[data.roomID].numTeams];
+			const numPlayers = rooms[data.roomID].numPlayers;
+			rooms[data.roomID].game = new Consecutive(board, deck, initTeams);
+			const playerHandSize = rooms[data.roomID].game.getPlayerHandSize(numPlayers);
+			Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
+				rooms[data.roomID].users[userSocket].team = teamAssignment[i % numPlayers];
+				rooms[data.roomID].users[userSocket].hand = rooms[data.roomID].game.getCardStack(playerHandSize);
+				io.to(userSocket).emit('player-init', {
+					team: rooms[data.roomID].users[userSocket].team,
+					hand: rooms[data.roomID].users[userSocket].hand
+				});
 			});
-		});
-		rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
-		io.in(data.roomID).emit('game-ready');
-		let currTurn = rooms[data.roomID].turnManager.getTurn();
-		io.in(data.roomID).emit('other-player-turn', {
-			team: currTurn.team,
-			hand: currTurn.username
-		});
-		io.to(currTurn.socket).emit('player-turn');
+			rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
+			io.in(data.roomID).emit('game-started');
+			let currTurn = rooms[data.roomID].turnManager.getTurn();
+			socket.to(data.roomID).emit('other-player-turn', {
+				team: currTurn.team,
+				player: currTurn.username
+			});
+			socket.emit('player-turn');
+		} catch(e) {
+			console.log(e)
+		}
 	});
 
 	socket.on('disconnect', () => {

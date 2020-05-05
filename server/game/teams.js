@@ -9,5 +9,4 @@ const teamAssignment = {
     2: 'R'
 };
 
-module.teams = teams;
-module.teamAssignment = teamAssignment;
+module.exports = { teams: teams, teamAssignment: teamAssignment };

@@ -11,7 +11,7 @@
 				{{ message }}
 			</div>
 		</template>
-		<template v-if="gameReady && isLeader">
+		<template v-if="gameReady && isLeader && !gameStarted">
 			<button v-on:click="startGame()">Start Game</button>
 		</template>
 	</div>
@@ -32,7 +32,8 @@
 				isLeader: false,
 				leaderID: null,
 				playerJoined: false,
-				gameReady: false
+				gameReady: false,
+				gameStarted: false
 			}
 		},
 		created() {
@@ -57,16 +58,25 @@
 				this.leader = data
 				this.messages.push(data + ' is the leader.')
 			});
-			this.socket.on('lobby-ready', () => {
+			this.socket.on('game-ready', () => {
 				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
 				this.gameReady = true;
+			});
+			this.socket.on('other-player-turn', data => {
+				this.messages.push(data.player + ' of ' + data.team + ' is playing.');
+			});
+			this.socket.on('player-turn', () => {
+				this.messages.push('Your turn');
 			});
 			this.socket.on('game-not-ready', () => {
 				if (this.gameReady) {
 					this.messages.push('Game is not ready.')
 					this.gameReady = false;
 				}
-			})
+			});
+			this.socket.on('game-started', () => {
+				this.gameStarted = true;
+			});
 			this.socket.on('full-room', () => {
 				this.messages.push('Cannot join room. Room is full.')
 			});
