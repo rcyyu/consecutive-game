@@ -7,6 +7,7 @@ const { uuid } = require('uuidv4');
 const deck  = require('./game/deck');
 const board = require('./game/board');
 const Consecutive = require('./game/consecutive');
+const TurnManager = require('./game/turnManager.js');
 const { teams, teamAsssignment } = require('./game/teams');
 
 const rooms = {};
@@ -29,7 +30,8 @@ io.on("connection", socket => {
 			leader: null,
 			numTeams: data.teams,
 			numPlayers: data.players,
-			game: null
+			game: null,
+			turnManager: null
 		}
 		socket.emit('created-room', roomID);
 	});
@@ -77,6 +79,14 @@ io.on("connection", socket => {
 				hand: rooms[data.roomID].users[userSocket].hand
 			});
 		});
+		rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
+		io.in(data.roomID).emit('game-ready');
+		let currTurn = rooms[data.roomID].turnManager.getTurn();
+		io.in(data.roomID).emit('other-player-turn', {
+			team: currTurn.team,
+			hand: currTurn.username
+		});
+		io.to(currTurn.socket).emit('player-turn');
 	});
 
 	socket.on('disconnect', () => {
