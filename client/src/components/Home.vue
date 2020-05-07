@@ -42,7 +42,6 @@
 </template>
 
 <script>
-    import io from "socket.io-client";
 	export default {
 		name: 'Home',
 		data() {
@@ -54,23 +53,19 @@
 				},
 				teams: null,
 				players: null,
-                socket: {},
 			}
 		},
-		created() {
-			this.socket = io("http://localhost:3000");
-        },
-        mounted() {
-            this.socket.on('created-room', data => {
-                this.$router.push('/' + data);
-            })
-        },
+		sockets: {
+			roomCreated: function(data) {
+				this.$router.push('/' + data);
+			}
+		},
 		methods: {
 			onChange() {
 				this.players = null;
 			},
 			createRoom() {
-                this.socket.emit("create-room", {
+                this.$socket.client.emit("createRoom", {
 					teams: this.teams,
 					players: this.players
 				});

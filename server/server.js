@@ -21,7 +21,7 @@ function getUserRooms(socket) {
 }
 
 io.on("connection", socket => {
-	socket.on("create-room", data => {
+	socket.on("createRoom", data => {
 		const roomID = randomWords({ min: 2, max: 4, join:'', formatter: (word, index) => {
 			return index === 0 ? word.slice(0,1).toUpperCase().concat(word.slice(1)) : word;
 		}});
@@ -33,10 +33,10 @@ io.on("connection", socket => {
 			game: null,
 			turnManager: null
 		}
-		socket.emit('created-room', roomID);
+		socket.emit('roomCreated', roomID);
 	});
 
-	socket.on("join-room", data => {
+	socket.on("joinRoom", data => {
 		if (rooms[data.roomID] != null) {
 			if (rooms[data.roomID].numPlayers > Object.keys(rooms[data.roomID].users).length) {
 				rooms[data.roomID].users[socket.id] = {
@@ -46,27 +46,27 @@ io.on("connection", socket => {
 					hand: null
 				};
 				socket.join(data.roomID);
-				socket.emit('user-connected', data.roomID);
+				socket.emit('userConnected', data.roomID);
 				if (rooms[data.roomID].leader === null) {
 					rooms[data.roomID].users[socket.id].isLeader = true;
 					rooms[data.roomID].leader = rooms[data.roomID].users[socket.id].username;
-					socket.emit('user-leadered');
+					socket.emit('userLeadered');
 				} else {
-					socket.emit('identify-leader', rooms[data.roomID].leader);
+					socket.emit('identifyLeader', rooms[data.roomID].leader);
 				}
-				socket.to(data.roomID).emit('other-user-connected', data.username);
+				socket.to(data.roomID).emit('otherUserConnected', data.username);
 				if (rooms[data.roomID].numPlayers == Object.keys(rooms[data.roomID].users).length) {
-					io.in(data.roomID).emit('game-ready');
+					io.in(data.roomID).emit('gameReady');
 				}
 			} else {
-				socket.emit('full-room');
+				socket.emit('fullRoom');
 			}
 		} else {
-			socket.emit('invalid-room');
+			socket.emit('invalidRoom');
 		}
 	});
 
-	socket.on('start-game', data => {
+	socket.on('startGame', data => {
 		try {
 			let initTeams = teams[rooms[data.roomID].numTeams];
 			const numPlayers = rooms[data.roomID].numPlayers;
@@ -75,25 +75,25 @@ io.on("connection", socket => {
 			Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
 				rooms[data.roomID].users[userSocket].team = teamAssignment[i % numPlayers];
 				rooms[data.roomID].users[userSocket].hand = rooms[data.roomID].game.getCardStack(playerHandSize);
-				io.to(userSocket).emit('player-init', {
+				io.to(userSocket).emit('playerInit', {
 					team: rooms[data.roomID].users[userSocket].team,
 					hand: rooms[data.roomID].users[userSocket].hand
 				});
 			});
 			rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
-			io.in(data.roomID).emit('game-started');
+			io.in(data.roomID).emit('gameStarted');
 			let currTurn = rooms[data.roomID].turnManager.getTurn();
-			socket.to(data.roomID).emit('other-player-turn', {
+			socket.to(data.roomID).emit('otherPlayerTurn', {
 				team: currTurn.team,
 				player: currTurn.username
 			});
-			io.to(currTurn.socket).emit('player-turn');
+			io.to(currTurn.socket).emit('playerTurn');
 		} catch(e) {
 			console.log(e)
 		}
 	});
 
-	socket.on('player-move', data => {
+	socket.on('playerMove', data => {
 		if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
 			
 		}
@@ -102,15 +102,15 @@ io.on("connection", socket => {
 	socket.on('disconnect', () => {
 		getUserRooms(socket).forEach(room => {
 			// delete user from room
-			socket.to(room).emit('other-user-disconnected', rooms[room].users[socket.id].username)
+			socket.to(room).emit('otherUserDisconnected', rooms[room].users[socket.id].username)
 			if (rooms[room].users[socket.id].isLeader && Object.keys(rooms[room].users).length > 1) {
 				let newLeader = Object.keys(rooms[room].users)[1]
 				rooms[room].users[newLeader].isLeader = true;
 				rooms[room].leader = rooms[room].users[newLeader].username;
-				io.to(newLeader).emit('user-leadered');
-				socket.to(room).emit('identify-leader', rooms[room].leader)
+				io.to(newLeader).emit('userLeadered');
+				socket.to(room).emit('identifyLeader', rooms[room].leader)
 			}
-			io.in(room).emit('game-not-ready');
+			io.in(room).emit('gameNotReady');
 			delete rooms[room].users[socket.id]
 			// delete room if empty
 			if (Object.keys(rooms[room].users).length === 0 && rooms[room].users.constructor === Object) {
