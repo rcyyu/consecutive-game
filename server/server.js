@@ -87,9 +87,15 @@ io.on("connection", socket => {
 				team: currTurn.team,
 				player: currTurn.username
 			});
-			socket.emit('player-turn');
+			io.to(currTurn.socket).emit('player-turn');
 		} catch(e) {
 			console.log(e)
+		}
+	});
+
+	socket.on('player-move', data => {
+		if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
+			
 		}
 	});
 
