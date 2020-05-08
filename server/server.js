@@ -93,7 +93,7 @@ io.on("connection", socket => {
 		}
 	});
 
-	socket.on('playerMove', data => {
+	socket.on('selectCard', data => {
 		if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
 			
 		}
