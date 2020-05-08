@@ -94,7 +94,11 @@ io.on("connection", socket => {
 	});
 
 	socket.on('selectCard', data => {
-		if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
+		try {
+			if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
+				
+			}
+		} catch(e) {
 			
 		}
 	});

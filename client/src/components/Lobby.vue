@@ -6,7 +6,7 @@
 				<button v-on:click="joinRoom()">Join Room</button>
 			</div>
 		</template>
-		<template v-if="playerJoined">
+		<template v-if="playerJoined && !gameStarted">
 			<div v-for="message in messages" v-bind:key="message.id">
 				{{ message }}
 			</div>
@@ -14,12 +14,19 @@
 		<template v-if="gameReady && isLeader && !gameStarted">
 			<button v-on:click="startGame()">Start Game</button>
 		</template>
+		<template v-if="gameReady && gameStarted">
+			<Board :roomID="roomID" />
+		</template>
 	</div>
 </template>
 
 <script>
+	import Board from './board/Board.vue';
 	export default {
 		name: 'Lobby',
+		components: {
+			Board
+		},
 		data() {
 			return {
 				messages: [],

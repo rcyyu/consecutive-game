@@ -4,7 +4,7 @@
         v-bind:class="{ highlighted: highlighted, sequenced: isSequence }"
         v-on:click="selectCard()"
     >
-        <img class='cardImg' src="../../assets/{{img}}">
+        <img class='cardImg' :src="require('../../assets/cards/'+img)" >
     </div>
 </template>
 <script>

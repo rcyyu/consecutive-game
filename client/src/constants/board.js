@@ -2,7 +2,7 @@ const board = [
     [
         { card: 'w', team: null, isSequence: false, image: 'W.png', row: 0, col: 0 },
         { card: 'ac', team: null, isSequence: false, image: 'AC.png', row: 0, col: 1 },
-        { card: 'kc', team: null, isSequence: false, image: 'KCpng', row: 0, col: 2 },
+        { card: 'kc', team: null, isSequence: false, image: 'KC.png', row: 0, col: 2 },
         { card: 'qc', team: null, isSequence: false, image: 'QC.png', row: 0, col: 3 },
         { card: '10c', team: null, isSequence: false, image: '10C.png', row: 0, col: 4 },
         { card: '9c', team: null, isSequence: false, image: '9C.png', row: 0, col: 5 },
