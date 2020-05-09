@@ -1,21 +1,36 @@
 <template>
     <div class="board">
         <template v-for='row in board'>
-            <template v-for='card in row'>
-                <BoardCard 
-                    :key="card.id"
-                    :card="card.card"
-                    :img="card.image"
-                    :team="card.team"
-                    :isSequence="card.isSequence"
-                    :row="card.row"
-                    :col="card.col"
-                    :roomID="roomID"
-                />
-            </template>
+            <div class="row" :key='row.id'>
+                <template v-for='card in row'>
+                    <BoardCard
+                        class="card"
+                        :key="card.id"
+                        :card="card.card"
+                        :img="card.image"
+                        :team="card.team"
+                        :isSequence="card.isSequence"
+                        :row="card.row"
+                        :col="card.col"
+                        :roomID="roomID"
+                    />
+                </template>
+            </div>
         </template>
     </div>
 </template>
+<style lang="scss" scoped>
+    .board {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-rows: repeat(10, 1fr);
+    }
+    .row {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+    }
+</style>
 <script>
 import BoardCard from './BoardCard.vue';
 import board from '../../constants/board.js';

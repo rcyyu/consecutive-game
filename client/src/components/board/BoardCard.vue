@@ -7,6 +7,17 @@
         <img class='cardImg' :src="require('../../assets/cards/'+img)" >
     </div>
 </template>
+<style lang="scss" scoped>
+    .boardCard {
+        max-width: 100%;
+        .cardImg {
+            max-width: 100%;
+        }
+        .highlighted {
+            border: 2px solid #5E9ED6
+        }
+    }
+</style>
 <script>
     export default {
         name: 'BoardCard',
