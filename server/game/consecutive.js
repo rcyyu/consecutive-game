@@ -18,26 +18,35 @@ class Consecutive {
     }
 
     getPlayerHandSize(numPlayers) {
+        let size = 0
         switch(numPlayers) {
-            case 2:
-                return 7;
-            case 3:
-                return 6;
-            case 4:
-                return 6;
-            case 6:
-                return 5;
-            case 8:
-                return 4;
-            case 9:
-                return 4;
-            case 10:
-                return 3;
-            case 12:
-                return 3;
-            default:
-                return -1;
+            case '2':
+                size = 7;
+                break;
+            case '3':
+                size = 6;
+                break;
+            case '4':
+                size = 6;
+                break;
+            case '6':
+                size = 5;
+                break;
+            case '8':
+                size = 4;
+                break;
+            case '9':
+                size = 4;
+                break;
+            case '10':
+                size = 3;
+                break;
+            case '12':
+                size = 3;
+                break;
         }
+        console.log(size)
+        return size;
     }
 
     shuffleDeck() {

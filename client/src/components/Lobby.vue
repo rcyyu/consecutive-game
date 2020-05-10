@@ -15,17 +15,22 @@
 			<button v-on:click="startGame()">Start Game</button>
 		</template>
 		<template v-if="gameReady && gameStarted">
-			<Board :roomID="roomID" />
+			<div class='game'>
+				<Board :roomID="roomID" />
+				<Hand :hand="hand" />
+			</div>
 		</template>
 	</div>
 </template>
 
 <script>
-	import Board from './board/Board.vue';
+	import Board from './game/board/Board.vue';
+	import Hand from './game/hand/Hand.vue';
 	export default {
 		name: 'Lobby',
 		components: {
-			Board
+			Board,
+			Hand
 		},
 		data() {
 			return {
@@ -36,7 +41,9 @@
 				leaderID: null,
 				playerJoined: false,
 				gameReady: false,
-				gameStarted: false
+				gameStarted: false,
+				team: '',
+				hand: []
 			}
 		},
 		sockets: {
@@ -73,6 +80,11 @@
 					this.messages.push('Game is not ready.')
 					this.gameReady = false;
 				}
+			},
+			playerInit: function(data) {
+				this.team = data.team;
+				this.hand = data.hand;
+				console.log(data.hand)
 			},
 			gameStarted: function() {
 				this.gameStarted = true;

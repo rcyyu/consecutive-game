@@ -12,7 +12,7 @@ const board = [
         { card: 'w', team: null, isSequence: false, image: 'W.png', row: 0, col: 9 }
     ],
     [
-        { card: 'ad', team: null, isSequence: false, image: 'AD.png', row: 1, col: 0 },
+        { card: 'ad', team: null, isSequence: false, image: 'AcD.png', row: 1, col: 0 },
         { card: '7s', team: null, isSequence: false, image: '7S.png', row: 1, col: 1 },
         { card: '8s', team: null, isSequence: false, image: '8S.png', row: 1, col: 2 },
         { card: '9s', team: null, isSequence: false, image: '9S.png', row: 1, col: 3 },
@@ -74,7 +74,7 @@ const board = [
     [
         { card: '8d', team: null, isSequence: false, image: '8D.png', row: 6, col: 0 },
         { card: '2s', team: null, isSequence: false, image: '2S.png', row: 6, col: 1 },
-        { card: 'ad', team: null, isSequence: false, image: 'AD.png', row: 6, col: 2 },
+        { card: 'ad', team: null, isSequence: false, image: 'AcD.png', row: 6, col: 2 },
         { card: 'qh', team: null, isSequence: false, image: 'QH.png', row: 6, col: 3 },
         { card: 'kh', team: null, isSequence: false, image: 'KH.png', row: 6, col: 4 },
         { card: 'ah', team: null, isSequence: false, image: 'AH.png', row: 6, col: 5 },

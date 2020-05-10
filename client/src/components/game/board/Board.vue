@@ -23,17 +23,20 @@
     .board {
         width: 100%;
         height: 100%;
+        max-width: 960px;
         display: grid;
         grid-template-rows: repeat(10, 1fr);
+        grid-row-gap: 2px;
     }
     .row {
         display: grid;
         grid-template-columns: repeat(10, 1fr);
+        grid-column-gap: 2px;
     }
 </style>
 <script>
 import BoardCard from './BoardCard.vue';
-import board from '../../constants/board.js';
+import board from '../../../constants/board.js';
 export default {
     name: 'Board',
     props: {
