@@ -71,6 +71,7 @@ io.on("connection", socket => {
 			let initTeams = teams[rooms[data.roomID].numTeams];
 			const numPlayers = rooms[data.roomID].numPlayers;
 			rooms[data.roomID].game = new Consecutive(board, deck, initTeams);
+			rooms[data.roomID].game.shuffleDeck();
 			const playerHandSize = rooms[data.roomID].game.getPlayerHandSize(numPlayers);
 			Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
 				rooms[data.roomID].users[userSocket].team = teamAssignment[i % numPlayers];
@@ -83,7 +84,7 @@ io.on("connection", socket => {
 			rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
 			io.in(data.roomID).emit('gameStarted');
 			let currTurn = rooms[data.roomID].turnManager.getTurn();
-			socket.to(data.roomID).emit('otherPlayerTurn', {
+			io.in(data.roomID).emit('otherPlayerTurn', {
 				team: currTurn.team,
 				player: currTurn.username
 			});
@@ -95,8 +96,50 @@ io.on("connection", socket => {
 
 	socket.on('selectCard', data => {
 		try {
-			if (rooms[data.roomID].turnManager.getTurn().socket === socket.id) {
-				
+			const { card, row, col, roomID } = data;
+			if (rooms[roomID].turnManager.getTurn().socket === socket.id) {
+				const playerTeam = rooms[roomID].users[socket.id].team;
+				if (rooms[roomID].users[socket.id].hand.indexOf(card) >= 0) {
+					if (card in rooms[roomID].game.oneEyedJacks) {
+						let cardRemoved = rooms[roomID].game.removeCard(card, playerTeam, row, col);
+						if (cardRemoved) {
+							io.in(roomID).emit('cardRemoved', {
+								row: row,
+								col: col,
+								team: playerTeam
+							});
+							let nextTurn = rooms[data.roomID].turnManager.nextTurn();
+							io.in(roomID).emit('otherPlayerTurn', {
+								team: nextTurn.team,
+								player: nextTurn.username
+							});
+							io.to(nextTurn.socket).emit('playerTurn');
+						}
+					} else {
+						let cardPlaced = rooms[roomID].game.placeCard(card, playerTeam, row, col);
+						if (cardPlaced) {
+							const newSequence = rooms[roomID].game.updateSequences(row, col, playerTeam);
+							if (!newSequence || !newSequence.length) {
+								io.in(roomID).emit('cardPlaced', {
+									row: row,
+									col: col,
+									team: playerTeam
+								});
+							} else {
+								io.in(roomID).emit('newSequence', {
+									newSequence: newSequence,
+									team: playerTeam
+								});
+							}
+							let nextTurn = rooms[data.roomID].turnManager.nextTurn();
+							io.in(roomID).emit('otherPlayerTurn', {
+								team: nextTurn.team,
+								player: nextTurn.username
+							});
+							io.to(nextTurn.socket).emit('playerTurn');
+						}
+					}
+				}
 			}
 		} catch(e) {
 			

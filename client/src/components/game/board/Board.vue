@@ -8,10 +8,11 @@
                         :key="card.id"
                         :card="card.card"
                         :img="card.image"
-                        :team="card.team"
+                        :occupiedTeam="card.team"
                         :isSequence="card.isSequence"
                         :row="card.row"
                         :col="card.col"
+                        :highlighted="cardInHand(card.card)"
                         :roomID="roomID"
                     />
                 </template>
@@ -26,12 +27,11 @@
         max-width: 960px;
         display: grid;
         grid-template-rows: repeat(10, 1fr);
-        grid-row-gap: 2px;
     }
     .row {
         display: grid;
         grid-template-columns: repeat(10, 1fr);
-        grid-column-gap: 2px;
+        grid-column-gap: 4px;
     }
 </style>
 <script>
@@ -40,7 +40,8 @@ import board from '../../../constants/board.js';
 export default {
     name: 'Board',
     props: {
-        roomID: String
+        roomID: String,
+        hand: Array
     },
     components: {
         BoardCard
@@ -48,6 +49,11 @@ export default {
     data() {
         return {
             board: board
+        }
+    },
+    methods: {
+        cardInHand(card) {
+            return this.hand.indexOf(card) >= 0;
         }
     }
 }

@@ -45,12 +45,11 @@ class Consecutive {
                 size = 3;
                 break;
         }
-        console.log(size)
         return size;
     }
 
     shuffleDeck() {
-        for (let i = this.deck.deckLength - 1; i > 0; i--) {
+        for (let i = this.deck.length - 1; i > 0; i--) {
             let r = Math.floor(Math.random() * (i + 1));
             let temp = this.deck[r];
             this.deck[r] = this.deck[i];
@@ -294,8 +293,9 @@ class Consecutive {
 }
 // var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
 // var game = new Consecutive(board, deck, teams);
+// console.log(deck);
 // game.shuffleDeck();
-
+// console.log(deck);
 // game.placeCard('kd', 'B', 7, 2);
 // game.placeCard('qh', 'B', 6, 3);
 // game.placeCard('3h', 'B', 5, 4);

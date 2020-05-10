@@ -1,12 +1,16 @@
 <template>
     <div
         class='boardCard'
-        :class="{ highlighted: highlighted, sequenced: isSequence }"
+        :class="{ sequenced: isSequence }"
         v-on:click="selectCard()"
     >
-        <img class='cardImg' :src="require('../../../assets/boardCards/'+img)" >
+        <img
+            class='cardImg'
+            :class="{ highlighted: highlighted }"
+            :src="require('../../../assets/boardCards/'+img)"
+        />
         <div
-            v-if="team"
+            v-if="occupiedTeam"
             class='chip'
             :class="getTeamColour()"
         >
@@ -17,14 +21,15 @@
     .boardCard {
         max-width: 100%;
         position: relative;
-        .highlighted {
-            outline: 2px dashed #5E9ED6;
-        }
-        .sequenced {
+        &.sequenced {
             outline: 2px solid red;
         }
         .cardImg {
             max-width: 100%;
+            &.highlighted {
+                outline: 2px dashed #5E9ED6;
+                cursor: pointer;
+            }
         }
         .chip {
             height: 40px;
@@ -53,7 +58,7 @@
         props: {
             card: String,
             img: String,
-            team: String,
+            occupiedTeam: String,
             isSequence: Boolean,
             row: Number,
             col: Number,
@@ -65,13 +70,17 @@
         },
         methods: {
             selectCard() {
-                this.$socket.client.emit("selectCard", {
-					teams: this.teams,
-					players: this.players
-				});
+                if (this.highlighted) {
+                    this.$socket.client.emit("selectCard", {
+                        roomID: this.roomID,
+                        card: this.card,
+                        row: this.row,
+                        col: this.col
+                    });
+                }
             },
             getTeamColour() {
-                switch(this.team) {
+                switch(this.occupiedTeam) {
                     case 'R':
                         return 'red';
                     case 'G':

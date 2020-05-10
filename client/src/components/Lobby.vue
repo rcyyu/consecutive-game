@@ -16,13 +16,30 @@
 		</template>
 		<template v-if="gameReady && gameStarted">
 			<div class='game'>
-				<Board :roomID="roomID" />
+				<Board
+					:roomID="roomID"
+					:hand="hand"
+				/>
 				<Hand :hand="hand" />
 			</div>
 		</template>
 	</div>
 </template>
-
+<style lang="scss" scoped>
+	.game {
+		display: grid;
+		grid-template-columns: auto 800px auto;
+		grid-template-rows: auto;
+		.board {
+			grid-column: 2 / 3;
+			grid-row: 1 / 2;
+		}
+		.hand {
+			grid-column: 2 / 3;
+			grid-row: 2 / 3;
+		}
+	}
+</style>
 <script>
 	import Board from './game/board/Board.vue';
 	import Hand from './game/hand/Hand.vue';
