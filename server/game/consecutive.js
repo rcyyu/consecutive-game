@@ -106,7 +106,7 @@ class Consecutive {
         return false;
     }
 
-    updateSequences(row, col, team) {
+    async updateSequences(row, col, team) {
         if (!this.board[row][col].occupied) {
             return []
         }
@@ -158,6 +158,7 @@ class Consecutive {
                 potentialTenSequence.push([row, 0]);
             }
             for (let i = 1; i < this.board[0].length; i++) {
+                console.log('row: ' + row + ' col: ', i);
                 if ((this.board[row][i].team === team || this.board[row][i].card === 'w')
                 && !(prevSpace.isSequence && this.board[row][i].isSequence)) {
                     potentialFiveSequence.push([row, i]);
@@ -238,7 +239,7 @@ class Consecutive {
                 potentialFiveSequence.push([rowStart, colStart]);
                 potentialTenSequence.push([rowStart, colStart]);
             }
-            for (let i = 1; i < this.board.length - ((rowStart < colStart) ? rowStart : colStart); i++) {
+            for (let i = 1; i < rowStart - colStart + 1; i++) {
                 let c = colStart + i;
                 let r = rowStart - i;
                 if ((this.board[r][c].team === team || this.board[r][c].card === 'w')
@@ -291,19 +292,40 @@ class Consecutive {
         }
     }
 }
-var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
-var game = new Consecutive(board, deck, teams);
-game.printBoard();
+// var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
+// var game = new Consecutive(board, deck, teams);
+// game.printBoard();
 // console.log(deck);
 // game.shuffleDeck();
 // console.log(deck);
-// game.placeCard('kd', 'B', 7, 2);
-// game.placeCard('qh', 'B', 6, 3);
+// game.placeCard('ad', 'B', 6, 2);
+// game.placeCard('10h', 'B', 5, 3);
+// game.placeCard('2h', 'B', 4, 4);
+// game.placeCard('6h', 'B', 3, 5);
+// game.placeCard('6c', 'B', 2, 6);
+// game.placeCard('10d', 'B', 4, 0);
+// game.placeCard('5s', 'B', 3, 1);
+// game.placeCard('10c', 'B', 2, 2);
+// game.placeCard('9s', 'B', 1, 3);
+// game.placeCard('10c', 'B', 0, 4);
+// game.placeCard('2d', 'B', 9, 4);
+// game.placeCard('7h', 'B', 8, 5);
+// game.placeCard('8d', 'B', 7, 6);
+// game.placeCard('6d', 'B', 6, 7);
+// game.placeCard('ah', 'B', 5, 8);
+// game.placeCard('ad', 'B', 1, 0);
+// game.placeCard('6s', 'B', 2, 1);
+// game.placeCard('qc', 'B', 3, 2);
+// game.placeCard('9h', 'B', 4, 3);
 // game.placeCard('3h', 'B', 5, 4);
-// game.placeCard('5h', 'B', 4, 5);
-// game.placeCard('5c', 'B', 3, 6);
+// game.placeCard('ad', 'B', 1, 0);
+// game.placeCard('7s', 'B', 1, 1);
+// game.placeCard('8s', 'B', 1, 2);
+// game.placeCard('9s', 'B', 1, 3);
+// game.placeCard('10s', 'B', 1, 4);
+// game.printBoard();
 // // game.placeCard('2c', 'B', 6, 6);
-// console.log('sequence', game.updateSequences(7, 2, 'B'));
+/// console.log('sequence', game.updateSequences(6, 2, 'B'));
 // game.placeCard('3h', 'B', 8, 1);
 
 // game.placeCard('2d', 'B', 2, 7);
