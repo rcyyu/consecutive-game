@@ -36,8 +36,8 @@ const board = [
         { card: '3s', team: null, isSequence: false, image: '3C.png', row: 2, col: 9 },
     ],
     [
-        { card: '5s', team: null, isSequence: false, image: '5S.png', row: 3, col: 0 },
-        { card: 'qd', team: null, isSequence: false, image: 'QD.png', row: 3, col: 1 },
+        { card: 'qd', team: null, isSequence: false, image: 'QD.png', row: 3, col: 0 },
+        { card: '5s', team: null, isSequence: false, image: '5S.png', row: 3, col: 1 },
         { card: 'qc', team: null, isSequence: false, image: 'QC.png', row: 3, col: 2 },
         { card: '8h', team: null, isSequence: false, image: '8H.png', row: 3, col: 3 },
         { card: '7h', team: null, isSequence: false, image: '7H.png', row: 3, col: 4 },

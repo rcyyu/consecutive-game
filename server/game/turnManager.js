@@ -23,6 +23,7 @@ class TurnManager {
             prevNode = currNode;
         }
         firstNode.prev = prevNode;
+        prevNode.next = firstNode;
         return firstNode;
     }
 

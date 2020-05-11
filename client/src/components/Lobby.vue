@@ -101,10 +101,21 @@
 			playerInit: function(data) {
 				this.team = data.team;
 				this.hand = data.hand;
-				console.log(data.hand)
 			},
 			gameStarted: function() {
 				this.gameStarted = true;
+			},
+			turnSuccess: function(data) {
+				const { oldCard, newCard } = data;
+				var index = this.hand.indexOf(oldCard);
+				if (index !== -1) this.hand.splice(index, 1);
+				if (newCard) this.hand.push(newCard);
+			},
+			validation: function(data) {
+				if (this.hand !== data.hand) {
+					console.log('client', this.hand)
+					console.log('server', data.hand)
+				}
 			},
 			fullRoom: function() {
 				this.messages.push('Cannot join room. Room is full.')

@@ -58,15 +58,36 @@
         props: {
             card: String,
             img: String,
-            occupiedTeam: String,
-            isSequence: Boolean,
             row: Number,
             col: Number,
             highlighted: Boolean,
             roomID: String
         },
+        data() {
+            return {
+                occupiedTeam: null,
+                isSequence: false
+            }
+        },
         sockets: {
-            
+            cardPlaced: function({ row, col, team }) {
+                if (row == this.row && col == this.col) {
+                    this.occupiedTeam = team;
+                }
+            },
+            newSequence: function({ newSequence, row, col, team }) {
+                if (row == this.row && col == this.col) {
+                    this.occupiedTeam = team;
+                }
+                if (newSequence.indexOf([this.row, this.col]) >= 0) {
+                    this.isSequence = true;
+                }
+            },
+            cardRemoved: function({ row, col }) {
+                if (row == this.row && col == this.col) {
+                    this.occupiedTeam = null;
+                }
+            }
         },
         methods: {
             selectCard() {

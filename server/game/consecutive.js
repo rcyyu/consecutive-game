@@ -291,8 +291,9 @@ class Consecutive {
         }
     }
 }
-// var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
-// var game = new Consecutive(board, deck, teams);
+var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
+var game = new Consecutive(board, deck, teams);
+game.printBoard();
 // console.log(deck);
 // game.shuffleDeck();
 // console.log(deck);

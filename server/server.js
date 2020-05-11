@@ -105,10 +105,17 @@ io.on("connection", socket => {
 						if (cardRemoved) {
 							io.in(roomID).emit('cardRemoved', {
 								row: row,
-								col: col,
-								team: playerTeam
+								col: col
 							});
-							let nextTurn = rooms[data.roomID].turnManager.nextTurn();
+							const index = rooms[roomID].users[socket.id].hand.indexOf(card);
+							if (index !== -1) rooms[roomID].users[socket.id].hand.splice(index, 1);
+							const newCard = rooms[roomID].game.getCard();
+							rooms[roomID].users[socket.id].hand.push(newCard);
+							socket.emit('turnSuccess', {
+								oldCard: card,
+								newCard: newCard
+							});
+							const nextTurn = rooms[data.roomID].turnManager.nextTurn();
 							io.in(roomID).emit('otherPlayerTurn', {
 								team: nextTurn.team,
 								player: nextTurn.username
@@ -117,21 +124,39 @@ io.on("connection", socket => {
 						}
 					} else {
 						let cardPlaced = rooms[roomID].game.placeCard(card, playerTeam, row, col);
+						console.log(cardPlaced)
+						console.log(card)
+						if (!cardPlaced) {
+							rooms[roomID].game.printBoard();
+						}
 						if (cardPlaced) {
 							const newSequence = rooms[roomID].game.updateSequences(row, col, playerTeam);
+							console.log(newSequence);
 							if (!newSequence || !newSequence.length) {
+								console.log('placed')
 								io.in(roomID).emit('cardPlaced', {
 									row: row,
 									col: col,
 									team: playerTeam
 								});
 							} else {
+								console.log('sequenced')
 								io.in(roomID).emit('newSequence', {
 									newSequence: newSequence,
+									row: row,
+									col: col,
 									team: playerTeam
 								});
 							}
-							let nextTurn = rooms[data.roomID].turnManager.nextTurn();
+							const index = rooms[roomID].users[socket.id].hand.indexOf(card);
+							if (index !== -1) rooms[roomID].users[socket.id].hand.splice(index, 1);
+							const newCard = rooms[roomID].game.getCard();
+							rooms[roomID].users[socket.id].hand.push(newCard);
+							socket.emit('turnSuccess', {
+								oldCard: card,
+								newCard: newCard
+							});
+							const nextTurn = rooms[data.roomID].turnManager.nextTurn();
 							io.in(roomID).emit('otherPlayerTurn', {
 								team: nextTurn.team,
 								player: nextTurn.username
@@ -139,6 +164,9 @@ io.on("connection", socket => {
 							io.to(nextTurn.socket).emit('playerTurn');
 						}
 					}
+					socket.emit('validation', {
+						hand: rooms[roomID].users[socket.id].hand
+					})
 				}
 			}
 		} catch(e) {

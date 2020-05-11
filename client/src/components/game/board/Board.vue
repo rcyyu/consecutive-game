@@ -8,8 +8,6 @@
                         :key="card.id"
                         :card="card.card"
                         :img="card.image"
-                        :occupiedTeam="card.team"
-                        :isSequence="card.isSequence"
                         :row="card.row"
                         :col="card.col"
                         :highlighted="cardInHand(card.card)"
