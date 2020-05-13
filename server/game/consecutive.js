@@ -325,7 +325,7 @@ class Consecutive {
 // game.placeCard('10s', 'B', 1, 4);
 // game.printBoard();
 // // game.placeCard('2c', 'B', 6, 6);
-/// console.log('sequence', game.updateSequences(6, 2, 'B'));
+// console.log('sequence', game.updateSequences(6, 2, 'B'));
 // game.placeCard('3h', 'B', 8, 1);
 
 // game.placeCard('2d', 'B', 2, 7);

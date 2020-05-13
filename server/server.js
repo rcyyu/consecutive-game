@@ -70,7 +70,11 @@ io.on("connection", socket => {
 		try {
 			let initTeams = teams[rooms[data.roomID].numTeams];
 			const numPlayers = rooms[data.roomID].numPlayers;
-			rooms[data.roomID].game = new Consecutive(board, deck, initTeams);
+			console.log(data.roomID);
+			// Deep copy (not very elegant)
+			let newBoard = JSON.parse(JSON.stringify(board));
+			let newDeck = JSON.parse(JSON.stringify(deck));
+			rooms[data.roomID].game = new Consecutive(newBoard, newDeck, initTeams);
 			rooms[data.roomID].game.shuffleDeck();
 			const playerHandSize = rooms[data.roomID].game.getPlayerHandSize(numPlayers);
 			Object.keys(rooms[data.roomID].users).forEach((userSocket, i) => {
@@ -129,21 +133,22 @@ io.on("connection", socket => {
 						}
 						if (cardPlaced) {
 							let updateSequences = rooms[roomID].game.updateSequences(row, col, playerTeam);
-							updateSequences.then((newSequence) => {
-								if (!newSequence || !newSequence.length) {
+							updateSequences.then((newSequences) => {
+								if (!newSequences || !newSequences.length) {
 									io.in(roomID).emit('cardPlaced', {
 										row: row,
 										col: col,
 										team: playerTeam
 									});
 								} else {
-									console.log('sequenced')
-									io.in(roomID).emit('newSequence', {
-										newSequence: newSequence,
-										row: row,
-										col: col,
-										team: playerTeam
-									});
+									for (let i = 0; i < newSequences.length; i++) {
+										io.in(roomID).emit('newSequence', {
+											sequence: newSequences[i],
+											row: row,
+											col: col,
+											team: playerTeam
+										});
+									}
 								}
 								const index = rooms[roomID].users[socket.id].hand.indexOf(card);
 								if (index !== -1) rooms[roomID].users[socket.id].hand.splice(index, 1);

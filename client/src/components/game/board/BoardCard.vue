@@ -1,12 +1,11 @@
 <template>
     <div
         class='boardCard'
-        :class="{ sequenced: isSequence }"
         v-on:click="selectCard()"
     >
         <img
             class='cardImg'
-            :class="{ highlighted: highlighted }"
+            :class="[{ highlight: (highlighted && !occupiedTeam), sequenced: isSequence }, getTeamColour()]"
             :src="require('../../../assets/boardCards/'+img)"
         />
         <div
@@ -21,14 +20,24 @@
     .boardCard {
         max-width: 100%;
         position: relative;
-        &.sequenced {
-            outline: 2px solid red;
-        }
         .cardImg {
             max-width: 100%;
-            &.highlighted {
+            &.highlight {
                 outline: 2px dashed #5E9ED6;
                 cursor: pointer;
+            }
+            &.sequenced {
+                outline-width: 2px;
+                outline-style: solid;
+                &.red {
+                    outline-color: red;
+                }
+                &.blue {
+                    outline-color: blue;
+                }
+                &.green {
+                    outline-color: green;
+                }
             }
         }
         .chip {
@@ -75,12 +84,16 @@
                     this.occupiedTeam = team;
                 }
             },
-            newSequence: function({ newSequence, row, col, team }) {
+            newSequence: function({ sequence, row, col, team }) {
                 if (row == this.row && col == this.col) {
                     this.occupiedTeam = team;
                 }
-                if (newSequence.indexOf([this.row, this.col]) >= 0) {
-                    this.isSequence = true;
+                // TODO: fine a faster way to do this
+                for (var i = 0; i < sequence.length; i++) {
+                    if (sequence[i][0] == this.row && sequence[i][1] == this.col) {
+                        this.isSequence = true;
+                        break;
+                    }
                 }
             },
             cardRemoved: function({ row, col }) {
