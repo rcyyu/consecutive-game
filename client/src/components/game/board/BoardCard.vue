@@ -1,17 +1,21 @@
 <template>
     <div
         class='boardCard'
-        v-on:click="selectCard()"
+        v-on:click="cardClick()"
     >
         <img
             class='cardImg'
-            :class="[{ highlight: (highlighted && !occupiedTeam), sequenced: isSequence }, getTeamColour()]"
+            :class="[{
+                select: (!occupiedTeam && selectable),
+                selectAny: (!occupiedTeam && twoEyeInHand && !selectable),
+                remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
+                sequenced: isSequence }, getTeamColour()]"
             :src="require('../../../assets/boardCards/'+img)"
         />
         <div
             v-if="occupiedTeam"
             class='chip'
-            :class="getTeamColour()"
+            :class="[getTeamColour(), { remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)) }]"
         >
         </div>
     </div>
@@ -22,8 +26,16 @@
         position: relative;
         .cardImg {
             max-width: 100%;
-            &.highlight {
+            &.select {
                 outline: 2px dashed #5E9ED6;
+                cursor: pointer;
+            }
+            &.selectAny {
+                outline: 2px dotted #19B53E;
+                cursor: pointer;
+            }
+            &.remove {
+                outline: 2px dotted #FF675C;
                 cursor: pointer;
             }
             &.sequenced {
@@ -58,6 +70,9 @@
             &.green {
                 background-color: green;
             }
+            &.remove {
+                cursor: pointer;
+            }
         }
     }
 </style>
@@ -69,7 +84,10 @@
             img: String,
             row: Number,
             col: Number,
-            highlighted: Boolean,
+            selectable: Boolean,
+            oneEyeInHand: Boolean,
+            twoEyeInHand: Boolean,
+            team: String,
             roomID: String
         },
         data() {
@@ -103,11 +121,17 @@
             }
         },
         methods: {
-            selectCard() {
-                if (this.highlighted) {
+            cardClick() {
+                if (!this.occupiedTeam && (this.selectable || this.twoEyeInHand)) {
                     this.$socket.client.emit("selectCard", {
                         roomID: this.roomID,
                         card: this.card,
+                        row: this.row,
+                        col: this.col
+                    });
+                } else if (this.oneEyeInHand && !this.isSequence && this.occupiedTeam && this.occupiedTeam != this.team) {
+                    this.$socket.client.emit("removeCard", {
+                        roomID: this.roomID,
                         row: this.row,
                         col: this.col
                     });

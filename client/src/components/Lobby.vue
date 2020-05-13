@@ -19,6 +19,7 @@
 				<Board
 					:roomID="roomID"
 					:hand="hand"
+					:team="team"
 				/>
 				<Hand :hand="hand" />
 			</div>

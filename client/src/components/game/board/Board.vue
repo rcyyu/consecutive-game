@@ -10,7 +10,10 @@
                         :img="card.image"
                         :row="card.row"
                         :col="card.col"
-                        :highlighted="cardInHand(card.card)"
+                        :selectable="cardInHand(card.card)"
+                        :oneEyeInHand="oneEyeInHand()"
+                        :twoEyeInHand="twoEyeInHand()"
+                        :team="team"
                         :roomID="roomID"
                     />
                 </template>
@@ -39,7 +42,8 @@ export default {
     name: 'Board',
     props: {
         roomID: String,
-        hand: Array
+        hand: Array,
+        team: String
     },
     components: {
         BoardCard
@@ -52,6 +56,12 @@ export default {
     methods: {
         cardInHand(card) {
             return this.hand.indexOf(card) >= 0;
+        },
+        oneEyeInHand() {
+            return (this.hand.indexOf('js') >= 0) || (this.hand.indexOf('jh') >= 0);
+        },
+        twoEyeInHand() {
+            return (this.hand.indexOf('jc') >= 0) || (this.hand.indexOf('jd') >= 0);
         }
     }
 }

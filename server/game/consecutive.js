@@ -158,7 +158,6 @@ class Consecutive {
                 potentialTenSequence.push([row, 0]);
             }
             for (let i = 1; i < this.board[0].length; i++) {
-                console.log('row: ' + row + ' col: ', i);
                 if ((this.board[row][i].team === team || this.board[row][i].card === 'w')
                 && !(prevSpace.isSequence && this.board[row][i].isSequence)) {
                     potentialFiveSequence.push([row, i]);

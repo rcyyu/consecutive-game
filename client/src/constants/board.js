@@ -67,7 +67,7 @@ const board = [
         { card: '3h', team: null, isSequence: false, image: '3H.png', row: 5, col: 4 },
         { card: '4h', team: null, isSequence: false, image: '4H.png', row: 5, col: 5 },
         { card: '3c', team: null, isSequence: false, image: '3C.png', row: 5, col: 6 },
-        { card: '5d', team: null, isSequence: false, image: '3D.png', row: 5, col: 7 },
+        { card: '5d', team: null, isSequence: false, image: '5D.png', row: 5, col: 7 },
         { card: 'ah', team: null, isSequence: false, image: 'AH.png', row: 5, col: 8 },
         { card: '6s', team: null, isSequence: false, image: '6S.png', row: 5, col: 9 }
     ],
