@@ -68,7 +68,7 @@ io.on("connection", socket => {
 
 	socket.on('startGame', data => {
 		try {
-			let initTeams = teams[rooms[data.roomID].numTeams];
+			let initTeams = JSON.parse(JSON.stringify(teams[rooms[data.roomID].numTeams]));
 			const numPlayers = rooms[data.roomID].numPlayers;
 			console.log(data.roomID);
 			// Deep copy (not very elegant)
@@ -135,6 +135,11 @@ io.on("connection", socket => {
 										team: playerTeam
 									});
 								}
+								if (rooms[roomID].game.teams[playerTeam].sequences >= 2) {
+									io.in(roomID).emit('gameWon', {
+										team: playerTeam
+									});
+								}
 							}
 							const index = rooms[roomID].users[socket.id].hand.indexOf(cardUsed);
 							if (index !== -1) rooms[roomID].users[socket.id].hand.splice(index, 1);
@@ -155,9 +160,6 @@ io.on("connection", socket => {
 					}
 				}
 			}
-			socket.emit('validation', {
-				hand: rooms[roomID].users[socket.id].hand
-			});
 		} catch(e) {
 			console.log(e);
 		}

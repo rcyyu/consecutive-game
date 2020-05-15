@@ -24,6 +24,13 @@
 				<Hand :hand="hand" />
 			</div>
 		</template>
+		<template v-if="gameWon">
+			<div class='overlay'>
+			</div>
+			<div class='winMessage'>
+				{{ team + ' wins.' }}
+			</div>
+		</template>
 	</div>
 </template>
 <style lang="scss" scoped>
@@ -39,6 +46,28 @@
 			grid-column: 2 / 3;
 			grid-row: 2 / 3;
 		}
+	}
+	.overlay {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: gray;
+		opacity: 50%;
+		z-index: 1;
+	}
+	.winMessage {
+		width: 20%;
+		height: 20%;
+		position: absolute;
+		top: 40%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		text-align: center;
+		background-color: white;
+		border: 2px solid black;
+		z-index: 2;
 	}
 </style>
 <script>
@@ -61,7 +90,9 @@
 				gameReady: false,
 				gameStarted: false,
 				team: '',
-				hand: []
+				hand: [],
+				gameWon: false,
+				victor: ''
 			}
 		},
 		sockets: {
@@ -112,11 +143,10 @@
 				if (index !== -1) this.hand.splice(index, 1);
 				if (newCard) this.hand.push(newCard);
 			},
-			validation: function(data) {
-				if (this.hand !== data.hand) {
-					console.log('client', this.hand)
-					console.log('server', data.hand)
-				}
+			gameWon: function({ team }) {
+				this.gameWon = true;
+				this.victor = team;
+
 			},
 			fullRoom: function() {
 				this.messages.push('Cannot join room. Room is full.')
