@@ -141,6 +141,17 @@ io.on("connection", socket => {
 									});
 								}
 							}
+							const isNewDeadCard = rooms[roomID].game.isDeadCard(card);
+							if (isNewDeadCard) {
+								socket.emit('deadCard', {
+									card: card
+								});
+							} else {
+								socket.emit('aliveCard', {
+									card: card
+								});
+							}
+
 							const index = rooms[roomID].users[socket.id].hand.indexOf(cardUsed);
 							if (index !== -1) rooms[roomID].users[socket.id].hand.splice(index, 1);
 							const newCard = rooms[roomID].game.getCard();

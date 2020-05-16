@@ -4,7 +4,7 @@
         v-on:click="cardClick()"
     >
         <img
-            class='cardImg'
+            class='img'
             :class="[{
                 select: (!occupiedTeam && selectable),
                 selectAny: (!occupiedTeam && twoEyeInHand && !selectable),
@@ -24,8 +24,9 @@
     .boardCard {
         max-width: 100%;
         position: relative;
-        .cardImg {
+        .img {
             max-width: 100%;
+            display: block;
             &.select {
                 outline: 2px dashed #5E9ED6;
                 cursor: pointer;

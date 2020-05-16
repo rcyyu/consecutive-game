@@ -28,6 +28,7 @@
         max-width: 960px;
         display: grid;
         grid-template-rows: repeat(10, 1fr);
+        grid-row-gap: 4px;
     }
     .row {
         display: grid;

@@ -14,6 +14,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(5%, 80px));
         justify-content: center;
+        padding: 10px;
     }
 </style>
 <script>

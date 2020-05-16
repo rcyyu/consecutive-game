@@ -1,5 +1,6 @@
 const deck  = require('./deck');
 const board = require('./board');
+const cardPositions = require('./cardPositions');
 
 class Consecutive {
     constructor(board, deck, teams) {
@@ -100,8 +101,17 @@ class Consecutive {
             if ((place.card === card || card in this.twoEyedJacks) && !place.occupied) {
                 this.board[row][col].occupied = true;
                 this.board[row][col].team = team;
-                return true
+                return true;
             }
+        }
+        return false;
+    }
+
+    isDeadCard(card) {
+        const positionOne = cardPositions[card][0];
+        const positionTwo = cardPositions[card][1];
+        if (this.board[positionOne[0], positionOne[1]].occupied && this.board[positionTwo[0], positionTwo[1]].occupied) {
+            return true;
         }
         return false;
     }
