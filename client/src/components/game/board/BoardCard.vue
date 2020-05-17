@@ -9,13 +9,18 @@
                 select: (!occupiedTeam && selectable),
                 selectAny: (!occupiedTeam && twoEyeInHand && !selectable),
                 remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
+                clickable: playerTurn,
                 sequenced: isSequence }, getTeamColour()]"
             :src="require('../../../assets/boardCards/'+img)"
         />
         <div
             v-if="occupiedTeam"
             class='chip'
-            :class="[getTeamColour(), { remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)) }]"
+            :class="[
+                getTeamColour(), { 
+                    remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
+                    clickable: playerTurn
+                }]"
         >
         </div>
     </div>
@@ -29,14 +34,16 @@
             display: block;
             &.select {
                 outline: 2px dashed #5E9ED6;
-                cursor: pointer;
             }
             &.selectAny {
                 outline: 2px dotted #19B53E;
-                cursor: pointer;
             }
             &.remove {
                 outline: 2px dotted #FF675C;
+            }
+            &.select.clickable,
+            &.selectAny.clickable,
+            &.remove.clickable {
                 cursor: pointer;
             }
             &.sequenced {
@@ -71,7 +78,7 @@
             &.green {
                 background-color: green;
             }
-            &.remove {
+            &.remove.clickable {
                 cursor: pointer;
             }
         }
@@ -89,6 +96,7 @@
             oneEyeInHand: Boolean,
             twoEyeInHand: Boolean,
             team: String,
+            playerTurn: Boolean,
             roomID: String
         },
         data() {
@@ -123,19 +131,21 @@
         },
         methods: {
             cardClick() {
-                if (!this.occupiedTeam && (this.selectable || this.twoEyeInHand)) {
-                    this.$socket.client.emit("selectCard", {
-                        roomID: this.roomID,
-                        card: this.card,
-                        row: this.row,
-                        col: this.col
-                    });
-                } else if (this.oneEyeInHand && !this.isSequence && this.occupiedTeam && this.occupiedTeam != this.team) {
-                    this.$socket.client.emit("removeCard", {
-                        roomID: this.roomID,
-                        row: this.row,
-                        col: this.col
-                    });
+                if (this.playerTurn) {
+                    if (!this.occupiedTeam && (this.selectable || this.twoEyeInHand)) {
+                        this.$socket.client.emit("selectCard", {
+                            roomID: this.roomID,
+                            card: this.card,
+                            row: this.row,
+                            col: this.col
+                        });
+                    } else if (this.oneEyeInHand && !this.isSequence && this.occupiedTeam && this.occupiedTeam != this.team) {
+                        this.$socket.client.emit("removeCard", {
+                            roomID: this.roomID,
+                            row: this.row,
+                            col: this.col
+                        });
+                    }
                 }
             },
             getTeamColour() {

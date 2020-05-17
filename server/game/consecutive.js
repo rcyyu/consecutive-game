@@ -110,7 +110,7 @@ class Consecutive {
     isDeadCard(card) {
         const positionOne = cardPositions[card][0];
         const positionTwo = cardPositions[card][1];
-        if (this.board[positionOne[0], positionOne[1]].occupied && this.board[positionTwo[0], positionTwo[1]].occupied) {
+        if (this.board[positionOne[0]][positionOne[1]].occupied && this.board[positionTwo[0]][positionTwo[1]].occupied) {
             return true;
         }
         return false;
@@ -304,6 +304,10 @@ class Consecutive {
 // var teams = { 'B': { sequences: 0 }, 'R': { sequences: 0 } }
 // var game = new Consecutive(board, deck, teams);
 // game.printBoard();
+// game.placeCard('ad', 'B', 1, 0);
+// game.placeCard('ad', 'B', 6, 2);
+// game.printBoard();
+// console.log(game.isDeadCard('ad'))
 // console.log(deck);
 // game.shuffleDeck();
 // console.log(deck);

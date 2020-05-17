@@ -20,8 +20,13 @@
 					:roomID="roomID"
 					:hand="hand"
 					:team="team"
+					:playerTurn="playerTurn"
 				/>
-				<Hand :hand="hand" />
+				<Hand
+					:roomID="roomID"
+					:hand="hand"
+					:playerTurn="playerTurn"
+				/>
 			</div>
 		</template>
 		<template v-if="gameWon">
@@ -89,6 +94,8 @@
 				playerJoined: false,
 				gameReady: false,
 				gameStarted: false,
+				playerTurn: false,
+				replacedOne: false,
 				team: '',
 				hand: [],
 				gameWon: false,
@@ -120,9 +127,11 @@
 			},
 			otherPlayerTurn: function(data) {
 				this.messages.push(data.player + ' of ' + data.team + ' is playing.');
+				this.playerTurn = false;
 			},
 			playerTurn: function() {
 				this.messages.push('Your turn');
+				this.playerTurn = true;
 			},
 			gameNotReady: function() {
 				if (this.gameReady) {
@@ -142,6 +151,12 @@
 				var index = this.hand.indexOf(oldCard);
 				if (index !== -1) this.hand.splice(index, 1);
 				if (newCard) this.hand.push(newCard);
+				this.replacedOne = false;
+			},
+			replacedDeadCard: function({ index, newCard }) {
+				this.hand.splice(index, 1);
+				this.hand.push(newCard);
+				this.replacedOne = true;
 			},
 			gameWon: function({ team }) {
 				this.gameWon = true;

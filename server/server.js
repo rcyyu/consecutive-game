@@ -142,12 +142,15 @@ io.on("connection", socket => {
 								}
 							}
 							const isNewDeadCard = rooms[roomID].game.isDeadCard(card);
+							console.log(isNewDeadCard);
 							if (isNewDeadCard) {
-								socket.emit('deadCard', {
+								console.log('dead ', card)
+								io.in(roomID).emit('deadCard', {
 									card: card
 								});
 							} else {
-								socket.emit('aliveCard', {
+								console.log('alive ', card)
+								io.in(roomID).emit('aliveCard', {
 									card: card
 								});
 							}
@@ -209,13 +212,26 @@ io.on("connection", socket => {
 						});
 						io.to(nextTurn.socket).emit('playerTurn');
 					}
-					socket.emit('validation', {
-						hand: rooms[roomID].users[socket.id].hand
-					});
 				}
 			}
 		} catch(e) {
 			console.log(e);
+		}
+	});
+
+	socket.on('replaceDeadCard', ({ card, index, roomID }) => {
+		console.log('hit')
+		if (rooms[roomID].turnManager.getTurn().socket === socket.id) {
+			if (rooms[roomID].users[socket.id].hand[index] === card && rooms[roomID].game.isDeadCard(card)) {
+				rooms[roomID].users[socket.id].hand.splice(index, 1);
+				const newCard = rooms[roomID].game.getCard();
+				rooms[roomID].users[socket.id].hand.push(newCard);
+				socket.emit('replacedDeadCard', {
+					index: index,
+					newCard: newCard
+				});
+				console.log('replaced ', card);
+			}
 		}
 	});
 

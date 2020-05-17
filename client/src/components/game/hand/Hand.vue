@@ -1,10 +1,14 @@
 <template>
     <div class="hand">
-        <template v-for='card in hand'>
+        <template v-for='(card, index) in hand'>
             <HandCard
                 class='handCard'
-                :key='card.id'
+                :key='index'
                 :card='card'
+                :playerTurn="playerTurn"
+                :replacedOne="replacedOne"
+                :index='index'
+                :roomID="roomID"
             />
         </template>
     </div>
@@ -22,11 +26,14 @@ import HandCard from './HandCard.vue';
 export default {
     name: 'Hand',
     props: {
-        hand: Array
+        hand: Array,
+        playerTurn: Boolean,
+        replacedOne: Boolean,
+        roomID: String
     },
     data() {
         return {
-            handSize: this.hand.length
+            handSize: this.hand.length,
         }
     },
     components: {

@@ -4,10 +4,14 @@
     >
         <img class='img' :src="require('../../../assets/handCards/'+getCardPath())" >
         <template v-if='isDead'>
-            <div class='dead' v-on:click="removeDeadCard()">
+            <div
+                class='dead'
+                :class="{ clickable: playerTurn && !replacedOne }"
+                v-on:click="replaceDeadCard()"
+            >
                 <div class='overlay'></div>
-                <p class='text'>Dead Card</p>
-                <p class='hoverText'>Remove</p>
+                <p class='text'>Dead</p>
+                <p class='hoverText'>Replace</p>
             </div>
         </template>
     </div>
@@ -27,9 +31,39 @@
             top: 0;
             left: 0;
             .overlay {
+                width: 100%;
+                height: 100%;
                 opacity: 50%;
                 background-color: red;
                 border-radius: 5px;
+            }
+            .text {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                margin: 0;
+            }
+            .hoverText {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                margin: 0;
+                display: none;
+            }
+            &.clickable {
+                cursor: pointer;
+                &:hover {
+                    .text {
+                        display: none;
+                    }
+                    .hoverText {
+                        display: block;
+                    }
+                }
             }
         }
     }
@@ -39,16 +73,29 @@ import CardPaths from '../../../constants/cardPaths.js';
 export default {
     name: 'HandCard',
     props: {
-        card: String
+        card: String,
+        playerTurn: Boolean,
+        replacedOne: Boolean,
+        index: Number,
+        roomID: String
     },
     data() {
         return {
             isDead: false
         }
     },
+    watch: {
+        card: function(oldCard, newCard) {
+            if (oldCard !== newCard) {
+                this.isDead = false;
+            }
+        }
+    },
     sockets: {
         deadCard: function({ card }) {
+            console.log(card)
             if (card == this.card) {
+                console.log('dead')
                 this.isDead = true;
             }
         },
@@ -61,6 +108,15 @@ export default {
     methods: {
         getCardPath() {
             return CardPaths[this.card];
+        },
+        replaceDeadCard() {
+            if (!this.replacedOne) {
+                this.$socket.client.emit("replaceDeadCard", {
+                    card: this.card,
+                    index: this.index,
+                    roomID: this.roomID
+                });
+            }
         }
     }
 }
