@@ -74,36 +74,13 @@ export default {
     name: 'HandCard',
     props: {
         card: String,
+        isDead: Boolean,
         playerTurn: Boolean,
         replacedOne: Boolean,
-        index: Number,
         roomID: String
     },
-    data() {
-        return {
-            isDead: false
-        }
-    },
-    watch: {
-        card: function(oldCard, newCard) {
-            if (oldCard !== newCard) {
-                this.isDead = false;
-            }
-        }
-    },
     sockets: {
-        deadCard: function({ card }) {
-            console.log(card)
-            if (card == this.card) {
-                console.log('dead')
-                this.isDead = true;
-            }
-        },
-        aliveCard: function({ card }) {
-            if (card == this.card) {
-                this.isDead = false;
-            }
-        }
+        
     },
     methods: {
         getCardPath() {
@@ -113,7 +90,6 @@ export default {
             if (!this.replacedOne) {
                 this.$socket.client.emit("replaceDeadCard", {
                     card: this.card,
-                    index: this.index,
                     roomID: this.roomID
                 });
             }

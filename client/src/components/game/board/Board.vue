@@ -58,13 +58,38 @@ export default {
     },
     methods: {
         cardInHand(card) {
-            return this.hand.indexOf(card) >= 0;
+            const index = this.hand.findIndex((handCard) => {
+                if (handCard.card == card) {
+                    return true;
+                }
+            });
+            return index >= 0;
         },
         oneEyeInHand() {
-            return (this.hand.indexOf('js') >= 0) || (this.hand.indexOf('jh') >= 0);
+            const indexJS = this.hand.findIndex((handCard) => {
+                if (handCard.card == 'js') {
+                    return true;
+                }
+            });
+            const indexJH = this.hand.findIndex((handCard) => {
+                if (handCard.card == 'jh') {
+                    return true;
+                }
+            });
+            return (indexJS >= 0) || (indexJH >= 0);
         },
         twoEyeInHand() {
-            return (this.hand.indexOf('jc') >= 0) || (this.hand.indexOf('jd') >= 0);
+            const indexJC = this.hand.findIndex((handCard) => {
+                if (handCard.card == 'jc') {
+                    return true;
+                }
+            });
+            const indexJD = this.hand.findIndex((handCard) => {
+                if (handCard.card == 'jd') {
+                    return true;
+                }
+            });
+            return (indexJC >= 0) || (indexJD >= 0);
         }
     }
 }

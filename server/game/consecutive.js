@@ -68,7 +68,7 @@ class Consecutive {
     getCardStack(amount) {
         let stack = []
         for (let i = 0; i < amount; i++) {
-            stack.push(this.deck.pop());
+            stack.push({ card: this.deck.pop(), isDead: false });
             if (this.isDeckEmpty()) {
                 break;
             }
@@ -80,7 +80,8 @@ class Consecutive {
         if (this.isDeckEmpty()) {
             return null;
         }
-        return this.deck.pop();
+        const newCard = this.deck.pop();
+        return { card: newCard, isDead: this.isDeadCard(newCard) };
     }
 
     removeCard(card, team, row, col) {
@@ -108,6 +109,7 @@ class Consecutive {
     }
 
     isDeadCard(card) {
+        if (card in this.twoEyedJacks || card in this.oneEyedJacks) return false;
         const positionOne = cardPositions[card][0];
         const positionTwo = cardPositions[card][1];
         if (this.board[positionOne[0]][positionOne[1]].occupied && this.board[positionTwo[0]][positionTwo[1]].occupied) {

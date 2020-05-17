@@ -25,6 +25,7 @@
 				<Hand
 					:roomID="roomID"
 					:hand="hand"
+					:replacedOne="replacedOne"
 					:playerTurn="playerTurn"
 				/>
 			</div>
@@ -92,6 +93,7 @@
 				isLeader: false,
 				leaderID: null,
 				playerJoined: false,
+				gameLobby: [],
 				gameReady: false,
 				gameStarted: false,
 				playerTurn: false,
@@ -121,12 +123,16 @@
 				this.leader = data
 				this.messages.push(data + ' is the leader.')
 			},
+			lobbyUpdate: function({ gameLobby }) {
+				this.gameLobby = gameLobby;
+			},
 			gameReady: function() {
 				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
 				this.gameReady = true;
 			},
-			otherPlayerTurn: function(data) {
-				this.messages.push(data.player + ' of ' + data.team + ' is playing.');
+			otherPlayerTurn: function({ id, team }) {
+				this.messages.push(id + ' of ' + team + ' is playing.');
+				console.log('turn', id)
 				this.playerTurn = false;
 			},
 			playerTurn: function() {
@@ -148,15 +154,38 @@
 			},
 			turnSuccess: function(data) {
 				const { oldCard, newCard } = data;
-				var index = this.hand.indexOf(oldCard);
+				const index = this.hand.findIndex((card) => {
+					if (card.card == oldCard) {
+						return true;
+					}
+				});
 				if (index !== -1) this.hand.splice(index, 1);
 				if (newCard) this.hand.push(newCard);
 				this.replacedOne = false;
 			},
-			replacedDeadCard: function({ index, newCard }) {
+			replacedDeadCard: function({ oldCard, newCard }) {
+				const index = this.hand.findIndex((card) => {
+					if (card.card == oldCard) {
+						return true;
+					}
+				});
 				this.hand.splice(index, 1);
 				this.hand.push(newCard);
 				this.replacedOne = true;
+			},
+			deadCard: function({ card }) {
+				this.hand.forEach((handCard) => {
+					if (handCard.card == card) {
+						handCard.isDead = true;
+					}
+				});
+			},
+			aliveCard: function({ card }) {
+				this.hand.forEach((handCard) => {
+					if (handCard.card == card) {
+						handCard.isDead = false;
+					}
+				});
 			},
 			gameWon: function({ team }) {
 				this.gameWon = true;

@@ -4,7 +4,8 @@
             <HandCard
                 class='handCard'
                 :key='index'
-                :card='card'
+                :card='card.card'
+                :isDead='card.isDead'
                 :playerTurn="playerTurn"
                 :replacedOne="replacedOne"
                 :index='index'
