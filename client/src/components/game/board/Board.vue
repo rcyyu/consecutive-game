@@ -14,7 +14,7 @@
                         :oneEyeInHand="oneEyeInHand()"
                         :twoEyeInHand="twoEyeInHand()"
                         :team="team"
-                        :playerTurn="playerTurn"
+                        :isPlayerTurn="isPlayerTurn"
                         :roomID="roomID"
                     />
                 </template>
@@ -46,7 +46,7 @@ export default {
         roomID: String,
         hand: Array,
         team: String,
-        playerTurn: Boolean
+        isPlayerTurn: Boolean
     },
     components: {
         BoardCard

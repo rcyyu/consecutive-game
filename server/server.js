@@ -72,11 +72,11 @@ io.on("connection", socket => {
 					socket.emit('identifyLeader', rooms[data.roomID].leader);
 				}
 				socket.to(data.roomID).emit('otherUserConnected', data.username);
-				const gameLobby = Object.values(rooms[data.roomID].users).map(({ username, id, team }) => (
+				const playerList = Object.values(rooms[data.roomID].users).map(({ username, id, team }) => (
 					{ username: username, id: id, team: team, currentTurn: false }
 				));
 				io.in(data.roomID).emit('lobbyUpdate', {
-					gameLobby: gameLobby
+					playerList: playerList
 				});
 				if (rooms[data.roomID].numPlayers == Object.keys(rooms[data.roomID].users).length) {
 					io.in(data.roomID).emit('gameReady');
@@ -107,11 +107,11 @@ io.on("connection", socket => {
 					hand: rooms[data.roomID].users[userSocket].hand
 				});
 			});
-			const gameLobby = Object.values(rooms[data.roomID].users).map(({ username, id, team }) => (
+			const playerList = Object.values(rooms[data.roomID].users).map(({ username, id, team }) => (
 				{ username: username, id: id, team: team, currentTurn: false }
 			));
 			io.in(data.roomID).emit('lobbyUpdate', {
-				gameLobby: gameLobby
+				playerList: playerList
 			});
 			rooms[data.roomID].turnManager = new TurnManager(rooms[data.roomID].users);
 			io.in(data.roomID).emit('gameStarted');

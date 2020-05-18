@@ -9,7 +9,7 @@
                 select: (!occupiedTeam && selectable),
                 selectAny: (!occupiedTeam && twoEyeInHand && !selectable),
                 remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
-                clickable: playerTurn,
+                clickable: isPlayerTurn,
                 sequenced: isSequence }, getTeamColour()]"
             :src="require('../../../assets/boardCards/'+img)"
         />
@@ -19,7 +19,7 @@
             :class="[
                 getTeamColour(), { 
                     remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
-                    clickable: playerTurn
+                    clickable: isPlayerTurn
                 }]"
         >
         </div>
@@ -96,7 +96,7 @@
             oneEyeInHand: Boolean,
             twoEyeInHand: Boolean,
             team: String,
-            playerTurn: Boolean,
+            isPlayerTurn: Boolean,
             roomID: String
         },
         data() {
@@ -131,7 +131,7 @@
         },
         methods: {
             cardClick() {
-                if (this.playerTurn) {
+                if (this.isPlayerTurn) {
                     if (!this.occupiedTeam && (this.selectable || this.twoEyeInHand)) {
                         this.$socket.client.emit("selectCard", {
                             roomID: this.roomID,

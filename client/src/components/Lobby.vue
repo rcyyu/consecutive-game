@@ -16,17 +16,21 @@
 		</template>
 		<template v-if="gameReady && gameStarted">
 			<div class='game'>
+				<PlayerList
+					:playerList="playerList"
+					:currentPlayerTurn="currentPlayerTurn"
+				/>
 				<Board
 					:roomID="roomID"
 					:hand="hand"
 					:team="team"
-					:playerTurn="playerTurn"
+					:isPlayerTurn="isPlayerTurn"
 				/>
 				<Hand
 					:roomID="roomID"
 					:hand="hand"
 					:replacedOne="replacedOne"
-					:playerTurn="playerTurn"
+					:isPlayerTurn="isPlayerTurn"
 				/>
 			</div>
 		</template>
@@ -51,6 +55,10 @@
 		.hand {
 			grid-column: 2 / 3;
 			grid-row: 2 / 3;
+		}
+		.playerList {
+			grid-column: 1 / 2;
+			grid-row: 1 / 2;
 		}
 	}
 	.overlay {
@@ -79,11 +87,13 @@
 <script>
 	import Board from './game/board/Board.vue';
 	import Hand from './game/hand/Hand.vue';
+	import PlayerList from './game/playerList/playerList';
 	export default {
 		name: 'Lobby',
 		components: {
 			Board,
-			Hand
+			Hand,
+			PlayerList
 		},
 		data() {
 			return {
@@ -93,10 +103,11 @@
 				isLeader: false,
 				leaderID: null,
 				playerJoined: false,
-				gameLobby: [],
+				playerList: [],
 				gameReady: false,
 				gameStarted: false,
-				playerTurn: false,
+				currentPlayerTurn: '',
+				isPlayerTurn: false,
 				replacedOne: false,
 				team: '',
 				hand: [],
@@ -123,8 +134,8 @@
 				this.leader = data
 				this.messages.push(data + ' is the leader.')
 			},
-			lobbyUpdate: function({ gameLobby }) {
-				this.gameLobby = gameLobby;
+			lobbyUpdate: function({ playerList }) {
+				this.playerList = playerList;
 			},
 			gameReady: function() {
 				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
@@ -132,12 +143,12 @@
 			},
 			otherPlayerTurn: function({ id, team }) {
 				this.messages.push(id + ' of ' + team + ' is playing.');
-				console.log('turn', id)
-				this.playerTurn = false;
+				this.currentPlayerTurn = id;
+				this.isPlayerTurn = false;
 			},
 			playerTurn: function() {
 				this.messages.push('Your turn');
-				this.playerTurn = true;
+				this.isPlayerTurn = true;
 			},
 			gameNotReady: function() {
 				if (this.gameReady) {

@@ -6,7 +6,7 @@
                 :key='index'
                 :card='card.card'
                 :isDead='card.isDead'
-                :playerTurn="playerTurn"
+                :isPlayerTurn="isPlayerTurn"
                 :replacedOne="replacedOne"
                 :index='index'
                 :roomID="roomID"
@@ -28,7 +28,7 @@ export default {
     name: 'Hand',
     props: {
         hand: Array,
-        playerTurn: Boolean,
+        isPlayerTurn: Boolean,
         replacedOne: Boolean,
         roomID: String
     },

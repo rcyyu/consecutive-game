@@ -6,7 +6,7 @@
         <template v-if='isDead'>
             <div
                 class='dead'
-                :class="{ clickable: playerTurn && !replacedOne }"
+                :class="{ clickable: isPlayerTurn && !replacedOne }"
                 v-on:click="replaceDeadCard()"
             >
                 <div class='overlay'></div>
@@ -75,7 +75,7 @@ export default {
     props: {
         card: String,
         isDead: Boolean,
-        playerTurn: Boolean,
+        isPlayerTurn: Boolean,
         replacedOne: Boolean,
         roomID: String
     },
