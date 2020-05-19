@@ -63,7 +63,7 @@ io.on("connection", socket => {
 					hand: null
 				};
 				socket.join(data.roomID);
-				socket.emit('userConnected', data.roomID);
+				socket.emit('userConnected', { id: rooms[data.roomID].users[socket.id].id });
 				if (rooms[data.roomID].leader === null) {
 					rooms[data.roomID].users[socket.id].isLeader = true;
 					rooms[data.roomID].leader = rooms[data.roomID].users[socket.id].username;
@@ -71,7 +71,6 @@ io.on("connection", socket => {
 				} else {
 					socket.emit('identifyLeader', rooms[data.roomID].leader);
 				}
-				socket.to(data.roomID).emit('otherUserConnected', data.username);
 				const playerList = Object.values(rooms[data.roomID].users).map(({ username, id, team }) => (
 					{ username: username, id: id, team: team, currentTurn: false }
 				));
@@ -261,7 +260,6 @@ io.on("connection", socket => {
 	socket.on('disconnect', () => {
 		getUserRooms(socket).forEach(room => {
 			// delete user from room
-			socket.to(room).emit('otherUserDisconnected', rooms[room].users[socket.id].username)
 			if (rooms[room].users[socket.id].isLeader && Object.keys(rooms[room].users).length > 1) {
 				let newLeader = Object.keys(rooms[room].users)[1]
 				rooms[room].users[newLeader].isLeader = true;
@@ -271,6 +269,12 @@ io.on("connection", socket => {
 			}
 			io.in(room).emit('gameNotReady');
 			delete rooms[room].users[socket.id]
+			const playerList = Object.values(rooms[room].users).map(({ username, id, team }) => (
+				{ username: username, id: id, team: team, currentTurn: false }
+			));
+			io.in(room).emit('lobbyUpdate', {
+				playerList: playerList
+			});
 			// delete room if empty
 			if (Object.keys(rooms[room].users).length === 0 && rooms[room].users.constructor === Object) {
 				console.log("Closed " + room);

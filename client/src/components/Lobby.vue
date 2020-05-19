@@ -1,44 +1,77 @@
 <template>
-	<div>
-		<template v-if="!playerJoined">
-			<div>
-				<input v-model="username" type="text">
-				<button v-on:click="joinRoom()">Join Room</button>
+	<div class='game'>
+		<PlayerList
+			:playerList="playerList"
+			:currentPlayerTurn="currentPlayerTurn"
+			:playerID="playerID"
+		/>
+		<Board
+			:roomID="roomID"
+			:hand="hand"
+			:team="team"
+			:isPlayerTurn="isPlayerTurn && gameReady && gameStarted"
+		/>
+		<Hand
+			:roomID="roomID"
+			:hand="hand"
+			:replacedOne="replacedOne"
+			:isPlayerTurn="isPlayerTurn"
+		/>
+		<template v-if="!playerJoined && isValidRoom && !isRoomFull">
+			<div class='overlay'></div>
+			<div class='messageBox'>
+				<form class='form' @submit.prevent>
+					Enter a username.
+					<input v-model="username" required type="text">
+					<button v-on:click="joinRoom(username)" type="submit">Join Room</button>
+				</form>
 			</div>
 		</template>
-		<template v-if="playerJoined && !gameStarted">
-			<div v-for="message in messages" v-bind:key="message.id">
-				{{ message }}
+		<template v-if="gameReady && isLeader && !gameStarted && playerJoined">
+			<div class='overlay'></div>
+			<div class='messageBox'>
+				<button class='message' v-on:click="startGame()">Start Game</button>
 			</div>
 		</template>
-		<template v-if="gameReady && isLeader && !gameStarted">
-			<button v-on:click="startGame()">Start Game</button>
-		</template>
-		<template v-if="gameReady && gameStarted">
-			<div class='game'>
-				<PlayerList
-					:playerList="playerList"
-					:currentPlayerTurn="currentPlayerTurn"
-				/>
-				<Board
-					:roomID="roomID"
-					:hand="hand"
-					:team="team"
-					:isPlayerTurn="isPlayerTurn"
-				/>
-				<Hand
-					:roomID="roomID"
-					:hand="hand"
-					:replacedOne="replacedOne"
-					:isPlayerTurn="isPlayerTurn"
-				/>
-			</div>
+		<template v-if="!gameStarted && playerJoined">
+			<template v-if="!isLeader && gameReady">
+				<div class='overlay'></div>
+				<div class='messageBox'>
+					<p class="message">Waiting for {{ leader }} to start game.</p>
+				</div>
+			</template>
+			<template v-if="!gameReady">
+				<div class='overlay'></div>
+				<div class='messageBox'>
+					<p class="message">Waiting for players ...</p>
+				</div>
+			</template>
 		</template>
 		<template v-if="gameWon">
-			<div class='overlay'>
+			<div class='overlay'></div>
+			<div class='messageBox'>
+				<div class='message'>
+					<p>{{ team + ' wins.' }}</p>
+					<button v-on:click="newGame()">Create New Game</button>
+				</div>
 			</div>
-			<div class='winMessage'>
-				{{ team + ' wins.' }}
+		</template>
+		<template v-if="!gameReady && gameStarted">
+			<div class='overlay'></div>
+			<div class='messageBox'>
+				<div class='message'>
+					<p>Game ended. A player has left the game.</p>
+					<button v-on:click="newGame()">Create New Game</button>
+				</div>
+			</div>
+		</template>
+		<template v-if="isRoomFull || !isValidRoom">
+			<div class='overlay'></div>
+			<div class='messageBox'>
+				<div class='message'>
+					<p>Cannot join room. Room {{ !isValidRoom ? 'does not exist.' : 'is full.' }}</p>
+					<button v-on:click="newGame()">Go to Home</button>
+				</div>
 			</div>
 		</template>
 	</div>
@@ -59,29 +92,46 @@
 		.playerList {
 			grid-column: 1 / 2;
 			grid-row: 1 / 2;
+			padding-right: 10px;
 		}
-	}
-	.overlay {
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		top: 0;
-		left: 0;
-		background-color: gray;
-		opacity: 50%;
-		z-index: 1;
-	}
-	.winMessage {
-		width: 20%;
-		height: 20%;
-		position: absolute;
-		top: 40%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		text-align: center;
-		background-color: white;
-		border: 2px solid black;
-		z-index: 2;
+		.overlay {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			background-color: gray;
+			opacity: 50%;
+			z-index: 1;
+		}
+		.messageBox {
+			width: 20%;
+			height: 20%;
+			position: absolute;
+			top: 40%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			align-items: center;
+			text-align: center;
+			background-color: white;
+			border: 1px solid gray;
+			border-radius: 5px;
+			z-index: 2;
+			.message {
+				margin: auto;
+			}
+			.form {
+				margin: auto;
+				input {
+					margin: 5px;
+					display: block;
+				}
+				button {
+					margin: 5px;
+				}
+			}
+		}
 	}
 </style>
 <script>
@@ -97,9 +147,9 @@
 		},
 		data() {
 			return {
-				messages: [],
 				roomID: this.$route.params.room,
 				username: null,
+				playerID: null,
 				isLeader: false,
 				leaderID: null,
 				playerJoined: false,
@@ -112,47 +162,37 @@
 				team: '',
 				hand: [],
 				gameWon: false,
-				victor: ''
+				victor: '',
+				isRoomFull: false,
+				isValidRoom: true
 			}
 		},
 		sockets: {
-			userConnected: function() {
+			userConnected: function({ id }) {
 				this.playerJoined = true;
-				this.messages.push('You joined');
-			},
-			otherUserConnected: function(data) {
-				this.messages.push(data + ' joined');
-			},
-			otherUserDisconnected: function(data) {
-				this.messages.push(data + ' disconnected');
+				this.playerID = id;
 			},
 			userLeadered: function() {
 				this.isLeader = true;
-				this.messages.push('You are the leader.');
 			},
 			identifyLeader: function(data) {
 				this.leader = data
-				this.messages.push(data + ' is the leader.')
 			},
 			lobbyUpdate: function({ playerList }) {
 				this.playerList = playerList;
 			},
 			gameReady: function() {
-				this.messages.push('Game is ready to begin. Waiting for ' + (this.isLeader ? 'you' : this.leader) + ' to start the game.');
 				this.gameReady = true;
 			},
-			otherPlayerTurn: function({ id, team }) {
-				this.messages.push(id + ' of ' + team + ' is playing.');
+			otherPlayerTurn: function({ id }) {
 				this.currentPlayerTurn = id;
 				this.isPlayerTurn = false;
 			},
 			playerTurn: function() {
-				this.messages.push('Your turn');
 				this.isPlayerTurn = true;
 			},
 			gameNotReady: function() {
 				if (this.gameReady) {
-					this.messages.push('Game is not ready.')
 					this.gameReady = false;
 				}
 			},
@@ -204,18 +244,23 @@
 
 			},
 			fullRoom: function() {
-				this.messages.push('Cannot join room. Room is full.')
+				this.isRoomFull = true;
 			},
 			invalidRoom: function() {
-				this.messages.push('Cannot join room. Room does not exist.')
+				this.isValidRoom = false;
 			}
 		},
 		methods: {
-			joinRoom() {
-				this.$socket.client.emit('joinRoom', { roomID: this.roomID, username: this.username });
+			joinRoom(username) {
+				if(username) {
+					this.$socket.client.emit('joinRoom', { roomID: this.roomID, username: this.username });
+				}
 			},
 			startGame() {
 				this.$socket.client.emit('startGame', { roomID: this.roomID });
+			},
+			newGame() {
+				this.$router.push('/');
 			}
 		}
 	}

@@ -4,7 +4,7 @@
         :class="{ currentTurn: id == currentPlayerTurn }"
     >
         <div class="username">
-            {{ username }}
+            {{ username  + (isPlayer ? " (You)" : "")}}
         </div>
         <div
             class="team"
@@ -58,7 +58,8 @@ export default {
         username: String,
         id: String,
         team: String,
-        currentPlayerTurn: String
+        currentPlayerTurn: String,
+        isPlayer: Boolean
     },
     methods: {
         getTeamColour() {

@@ -7,6 +7,7 @@
                 :id="player.id"
                 :team="player.team"
                 :currentPlayerTurn="currentPlayerTurn"
+                :isPlayer="player.id === playerID"
             />
         </template>
     </div>
@@ -28,7 +29,8 @@ export default {
     name: "PlayerList",
     props: {
         playerList: Array,
-        currentPlayerTurn: String
+        currentPlayerTurn: String,
+        playerID: String
     },
     components: {
         Player
