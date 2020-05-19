@@ -41,3 +41,8 @@
 /client/*.njsproj
 /client/*.sln
 /client/*.sw?
+
+# Heroku files
+/server/.gitignore
+/client/.gitignore
+/client/static.json

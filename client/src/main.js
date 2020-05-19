@@ -7,8 +7,10 @@ import routes from './routes.js';
 
 Vue.config.productionTip = false;
 
-Vue.use(VueSocketio, io('http://localhost:3000/'));
+Vue.use(VueSocketio, io('https://consecutive-game-server.herokuapp.com/'));
 Vue.use(VueRouter);
+
+document.title = 'Consecutve';
 
 const router = new VueRouter({
   mode: 'history',
