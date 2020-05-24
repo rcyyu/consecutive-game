@@ -208,7 +208,7 @@ io.on('connection', socket => {
 			if (rooms[roomID].turnManager.getTurn().socket === socket.id) {
 				const playerTeam = rooms[roomID].users[socket.id].team;
 				let oneEyedCard = '';
-				if (findCard(rooms[roomID].users[socket.id], 'js')) {
+				if (findCard(rooms[roomID].users[socket.id].hand, 'js')) {
 					oneEyedCard = 'js';
 				} else if (findCard(rooms[roomID].users[socket.id].hand, 'jh')) {
 					oneEyedCard = 'jh';

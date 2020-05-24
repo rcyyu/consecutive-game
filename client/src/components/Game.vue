@@ -51,7 +51,7 @@
 			<div class='overlay'></div>
 			<div class='messageBox'>
 				<div class='message'>
-					<p>{{ team + ' wins.' }}</p>
+					<p>{{ 'Team ' + winningTeamName() + ' wins.' }}</p>
 					<button v-on:click='newGame()'>Create New Game</button>
 				</div>
 			</div>
@@ -261,6 +261,18 @@
 			},
 			newGame() {
 				this.$router.push('/');
+			},
+			winningTeamName() {
+				switch(this.victor) {
+					case 'R':
+						return 'Red';
+					case 'G':
+						return 'Green';
+					case 'B':
+						return 'Blue';
+					default:
+						return '';
+				}
 			}
 		}
 	}
