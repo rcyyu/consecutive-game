@@ -1,28 +1,28 @@
 <template>
-    <div class="board">
+    <div class='board'>
         <template v-for='row in board'>
-            <div class="row" :key='row.id'>
+            <div class='row' :key='row.id'>
                 <template v-for='card in row'>
                     <BoardCard
-                        class="card"
-                        :key="card.id"
-                        :card="card.card"
-                        :img="card.image"
-                        :row="card.row"
-                        :col="card.col"
-                        :selectable="cardInHand(card.card)"
-                        :oneEyeInHand="oneEyeInHand()"
-                        :twoEyeInHand="twoEyeInHand()"
-                        :team="team"
-                        :isPlayerTurn="isPlayerTurn"
-                        :roomID="roomID"
+                        class='card'
+                        :key='card.id'
+                        :card='card.card'
+                        :img='card.image'
+                        :row='card.row'
+                        :col='card.col'
+                        :selectable='cardInHand(card.card)'
+                        :oneEyeInHand='oneEyeInHand()'
+                        :twoEyeInHand='twoEyeInHand()'
+                        :team='team'
+                        :isPlayerTurn='isPlayerTurn'
+                        :roomID='roomID'
                     />
                 </template>
             </div>
         </template>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
     .board {
         width: 100%;
         height: 100%;

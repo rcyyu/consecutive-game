@@ -1,82 +1,82 @@
 <template>
 	<div class='game'>
 		<PlayerList
-			:playerList="playerList"
-			:currentPlayerTurn="currentPlayerTurn"
-			:playerID="playerID"
+			:playerList='playerList'
+			:currentPlayerTurn='currentPlayerTurn'
+			:playerID='playerID'
 		/>
 		<Board
-			:roomID="roomID"
-			:hand="hand"
-			:team="team"
-			:isPlayerTurn="isPlayerTurn && gameReady && gameStarted"
+			:roomID='roomID'
+			:hand='hand'
+			:team='team'
+			:isPlayerTurn='isPlayerTurn && gameReady && gameStarted'
 		/>
 		<Hand
-			:roomID="roomID"
-			:hand="hand"
-			:replacedOne="replacedOne"
-			:isPlayerTurn="isPlayerTurn"
+			:roomID='roomID'
+			:hand='hand'
+			:replacedOne='replacedOne'
+			:isPlayerTurn='isPlayerTurn'
 		/>
-		<template v-if="!playerJoined && isValidRoom && !isRoomFull">
+		<template v-if='!playerJoined && isValidRoom && !isRoomFull'>
 			<div class='overlay'></div>
 			<div class='messageBox'>
 				<form class='form' @submit.prevent>
 					Enter a username.
-					<input v-model="username" required type="text">
-					<button v-on:click="joinRoom(username)" type="submit">Join Room</button>
+					<input v-model='username' required type='text'>
+					<button v-on:click='joinRoom(username)' type='submit'>Join Room</button>
 				</form>
 			</div>
 		</template>
-		<template v-if="gameReady && isLeader && !gameStarted && playerJoined">
+		<template v-if='gameReady && isLeader && !gameStarted && playerJoined'>
 			<div class='overlay'></div>
 			<div class='messageBox'>
-				<button class='message' v-on:click="startGame()">Start Game</button>
+				<button class='message' v-on:click='startGame()'>Start Game</button>
 			</div>
 		</template>
-		<template v-if="!gameStarted && playerJoined">
-			<template v-if="!isLeader && gameReady">
+		<template v-if='!gameStarted && playerJoined'>
+			<template v-if='!isLeader && gameReady'>
 				<div class='overlay'></div>
 				<div class='messageBox'>
-					<p class="message">Waiting for {{ leader }} to start game.</p>
+					<p class='message'>Waiting for {{ leader }} to start game.</p>
 				</div>
 			</template>
-			<template v-if="!gameReady">
+			<template v-if='!gameReady'>
 				<div class='overlay'></div>
 				<div class='messageBox'>
-					<p class="message">Waiting for players ...</p>
+					<p class='message'>Waiting for players ...</p>
 				</div>
 			</template>
 		</template>
-		<template v-if="gameWon">
+		<template v-if='gameWon'>
 			<div class='overlay'></div>
 			<div class='messageBox'>
 				<div class='message'>
 					<p>{{ team + ' wins.' }}</p>
-					<button v-on:click="newGame()">Create New Game</button>
+					<button v-on:click='newGame()'>Create New Game</button>
 				</div>
 			</div>
 		</template>
-		<template v-if="!gameReady && gameStarted">
+		<template v-if='!gameReady && gameStarted'>
 			<div class='overlay'></div>
 			<div class='messageBox'>
 				<div class='message'>
 					<p>Game ended. A player has left the game.</p>
-					<button v-on:click="newGame()">Create New Game</button>
+					<button v-on:click='newGame()'>Create New Game</button>
 				</div>
 			</div>
 		</template>
-		<template v-if="isRoomFull || !isValidRoom">
+		<template v-if='isRoomFull || !isValidRoom'>
 			<div class='overlay'></div>
 			<div class='messageBox'>
 				<div class='message'>
 					<p>Cannot join room. Room {{ !isValidRoom ? 'does not exist.' : 'is full.' }}</p>
-					<button v-on:click="newGame()">Go to Home</button>
+					<button v-on:click='newGame()'>Go to Home</button>
 				</div>
 			</div>
 		</template>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 	.game {
 		display: grid;
 		grid-template-columns: auto 800px auto;
@@ -139,7 +139,7 @@
 	import Hand from './game/hand/Hand.vue';
 	import PlayerList from './game/playerList/playerList';
 	export default {
-		name: 'Lobby',
+		name: 'Game',
 		components: {
 			Board,
 			Hand,

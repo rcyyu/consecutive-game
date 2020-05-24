@@ -1,18 +1,18 @@
 <template>
-    <div class="playerList">
+    <div class='playerList'>
         <template v-for='player in playerList'>
             <Player
-                :key="player.id"
-                :username="player.username"
-                :id="player.id"
-                :team="player.team"
-                :currentPlayerTurn="currentPlayerTurn"
-                :isPlayer="player.id === playerID"
+                :key='player.id'
+                :username='player.username'
+                :id='player.id'
+                :team='player.team'
+                :currentPlayerTurn='currentPlayerTurn'
+                :isPlayer='player.id === playerID'
             />
         </template>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
     .playerList {
         width: 90%;
         height: 100%;
@@ -26,7 +26,7 @@
 <script>
 import Player from './player.vue';
 export default {
-    name: "PlayerList",
+    name: 'PlayerList',
     props: {
         playerList: Array,
         currentPlayerTurn: String,

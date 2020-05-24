@@ -1,11 +1,11 @@
 <template>
-	<div class="home">
+	<div class='home'>
 		<h1>Consecutive</h1>
 		<h2>An online version of Sequence</h2>
-		<form class="setup" @submit.prevent>
-			<select v-model="teams" @change="onChange()">
+		<form class='setup' @submit.prevent>
+			<select v-model='teams' @change='onChange()'>
 				<option
-					:value="null"
+					:value='null'
 					disabled
 					selected
 					hidden
@@ -13,15 +13,15 @@
 					Select Number of Teams
 				</option>
 				<option
-					v-for="teamSize in teamOptions"
-					v-bind:key="teamSize.id"
+					v-for='teamSize in teamOptions'
+					v-bind:key='teamSize.id'
 				>
 					{{ teamSize }}
 				</option>
 			</select>
-			<select v-model="players" :disabled="teams === null">
+			<select v-model='players' :disabled='teams === null'>
 				<option
-					:value="null"
+					:value='null'
 					disabled
 					selected
 					hidden
@@ -29,22 +29,22 @@
 					Select Number of Players
 				</option>
 				<option
-					v-for="numPlayers in playerOptions[teams]"
-					v-bind:key="numPlayers.id"
+					v-for='numPlayers in playerOptions[teams]'
+					v-bind:key='numPlayers.id'
 				>
 					{{ numPlayers }}
 				</option>
 			</select>
 			<button
-				v-on:click="createRoom()"
-				:disabled="teams === null || players === null"
+				v-on:click='createRoom()'
+				:disabled='teams === null || players === null'
 			>
 				Create Room
 			</button>
 		</form>
 	</div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 	.home {
 		width: 100%;
 		height: 100%;
@@ -88,7 +88,7 @@
 				this.players = null;
 			},
 			createRoom() {
-                this.$socket.client.emit("createRoom", {
+                this.$socket.client.emit('createRoom', {
 					teams: this.teams,
 					players: this.players
 				});

@@ -36,8 +36,8 @@ function findCardIndex(hand, card) {
 	});
 }
 
-io.on("connection", socket => {
-	socket.on("createRoom", data => {
+io.on('connection', socket => {
+	socket.on('createRoom', data => {
 		const roomID = randomWords({ min: 2, max: 4, join:'', formatter: (word, index) => {
 			return index === 0 ? word.slice(0,1).toUpperCase().concat(word.slice(1)) : word;
 		}});
@@ -52,7 +52,7 @@ io.on("connection", socket => {
 		socket.emit('roomCreated', roomID);
 	});
 
-	socket.on("joinRoom", data => {
+	socket.on('joinRoom', data => {
 		if (rooms[data.roomID] != null) {
 			if (rooms[data.roomID].numPlayers > Object.keys(rooms[data.roomID].users).length) {
 				rooms[data.roomID].users[socket.id] = {
@@ -277,7 +277,7 @@ io.on("connection", socket => {
 			});
 			// delete room if empty
 			if (Object.keys(rooms[room].users).length === 0 && rooms[room].users.constructor === Object) {
-				console.log("Closed " + room);
+				console.log('Closed ' + room);
 				delete rooms[room];
 			}
 		  });
@@ -285,5 +285,5 @@ io.on("connection", socket => {
 });
 
 server.listen(process.env.PORT || 3000, () => {
-	console.log("Listening at 3000");
+	console.log('Listening at 3000');
 });

@@ -6,8 +6,8 @@
         <template v-if='isDead'>
             <div
                 class='dead'
-                :class="{ clickable: isPlayerTurn && !replacedOne }"
-                v-on:click="replaceDeadCard()"
+                :class='{ clickable: isPlayerTurn && !replacedOne }'
+                v-on:click='replaceDeadCard()'
             >
                 <div class='overlay'></div>
                 <p class='text'>Dead</p>
@@ -16,7 +16,7 @@
         </template>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
     .handCard {
         max-width: 100%;
         position: relative;
@@ -88,7 +88,7 @@ export default {
         },
         replaceDeadCard() {
             if (!this.replacedOne) {
-                this.$socket.client.emit("replaceDeadCard", {
+                this.$socket.client.emit('replaceDeadCard', {
                     card: this.card,
                     roomID: this.roomID
                 });

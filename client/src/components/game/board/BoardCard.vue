@@ -1,31 +1,31 @@
 <template>
     <div
         class='boardCard'
-        v-on:click="cardClick()"
+        v-on:click='cardClick()'
     >
         <img
             class='img'
-            :class="[{
+            :class='[{
                 select: (!occupiedTeam && selectable),
                 selectAny: (!occupiedTeam && twoEyeInHand && !selectable),
                 remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
                 clickable: isPlayerTurn,
-                sequenced: isSequence }, getTeamColour()]"
+                sequenced: isSequence }, getTeamColour()]'
             :src="require('../../../assets/boardCards/'+img)"
         />
         <div
-            v-if="occupiedTeam"
+            v-if='occupiedTeam'
             class='chip'
-            :class="[
+            :class='[
                 getTeamColour(), { 
                     remove: (oneEyeInHand && !isSequence && occupiedTeam && (occupiedTeam !== team)),
                     clickable: isPlayerTurn
-                }]"
+                }]'
         >
         </div>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
     .boardCard {
         max-width: 100%;
         position: relative;
@@ -133,14 +133,14 @@
             cardClick() {
                 if (this.isPlayerTurn) {
                     if (!this.occupiedTeam && (this.selectable || this.twoEyeInHand)) {
-                        this.$socket.client.emit("selectCard", {
+                        this.$socket.client.emit('selectCard', {
                             roomID: this.roomID,
                             card: this.card,
                             row: this.row,
                             col: this.col
                         });
                     } else if (this.oneEyeInHand && !this.isSequence && this.occupiedTeam && this.occupiedTeam != this.team) {
-                        this.$socket.client.emit("removeCard", {
+                        this.$socket.client.emit('removeCard', {
                             roomID: this.roomID,
                             row: this.row,
                             col: this.col

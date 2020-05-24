@@ -1,18 +1,18 @@
 <template>
     <div
-        class="player"
-        :class="{ currentTurn: id == currentPlayerTurn }"
+        class='player'
+        :class='{ currentTurn: id == currentPlayerTurn }'
     >
-        <div class="username">
-            {{ username  + (isPlayer ? " (You)" : "")}}
+        <div class='username'>
+            {{ username  + (isPlayer ? ' (You)' : '')}}
         </div>
         <div
-            class="team"
-            :class="[getTeamColour()]"
+            class='team'
+            :class='[getTeamColour()]'
         ></div>
     </div>
 </template>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
     .player {
         width: 100%;
         height: 100%;
